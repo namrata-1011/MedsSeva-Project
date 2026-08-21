@@ -12,6 +12,7 @@ import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { showError } from '../../src/store/toastStore';
 import { loginSuccess } from '../../src/store/slices/authSlice';
 import { apiService } from '../../src/services/api';
@@ -108,7 +109,7 @@ const [isLoading, setIsLoading] = useState(false);
         role: response.user.role,
       };
       await AsyncStorage.setItem('user', JSON.stringify(userObj));
-      await AsyncStorage.setItem('token', response.token);
+      await SecureStore.setItemAsync('token', response.token);
       dispatch(loginSuccess(userObj));
       router.replace('/(tabs)');
     } catch (error: any) {
@@ -125,7 +126,7 @@ const [isLoading, setIsLoading] = useState(false);
             role: loginResponse.user.role,
           };
           await AsyncStorage.setItem('user', JSON.stringify(userObj));
-          await AsyncStorage.setItem('token', loginResponse.token);
+          await SecureStore.setItemAsync('token', loginResponse.token);
           dispatch(loginSuccess(userObj));
           router.replace('/(tabs)');
         } catch (loginError: any) {

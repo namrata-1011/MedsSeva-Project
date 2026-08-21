@@ -8,6 +8,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useDispatch } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { COLORS } from '../../src/theme/theme';
 import { loginSuccess } from '../../src/store/slices/authSlice';
 import { apiService } from '../../src/services/api';
@@ -103,7 +104,7 @@ const [otpError, setOtpError] = useState('');
         role: result.user.role,
       };
       await AsyncStorage.setItem('user', JSON.stringify(userObj));
-      await AsyncStorage.setItem('token', result.token);
+      await SecureStore.setItemAsync('token', result.token);
       dispatch(loginSuccess(userObj));
 
       const { registerFcmToken } = await import('../../src/services/notificationService');

@@ -12,6 +12,7 @@ import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { loginStart, loginSuccess } from '../../src/store/slices/authSlice';
 import { apiService } from '../../src/services/api';
 
@@ -55,7 +56,7 @@ const onSubmit = async (data: any) => {
         partner: response.user.partner,
       };
 await AsyncStorage.setItem('user', JSON.stringify(fullUserObj));
-      await AsyncStorage.setItem('token', response.token);
+      await SecureStore.setItemAsync('token', response.token);
       dispatch(loginSuccess(fullUserObj));
 
       const { registerFcmToken } = await import('../../src/services/notificationService');

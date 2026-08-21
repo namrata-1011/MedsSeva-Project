@@ -5,10 +5,11 @@ import { Stack, useRouter } from 'expo-router';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { store, RootState } from '../src/store';
-import { View, StyleSheet, ActivityIndicator, Modal } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Modal, LogBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { COLORS } from '../src/theme/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { loginSuccess } from '../src/store/slices/authSlice';
 import * as Notifications from 'expo-notifications';
 import {
@@ -27,6 +28,10 @@ import {
 import { GlobalSchedulerOverlay } from '../src/components/GlobalSchedulerOverlay';
 import { ToastHost } from '../src/components/ToastHost';
 import { initLogout } from '../src/utils/logout';
+
+LogBox.ignoreLogs([
+  "Can't perform a React state update on a component that hasn't mounted yet",
+]);
 
 const queryClient = new QueryClient();
 
@@ -47,7 +52,7 @@ useEffect(() => {
   useEffect(() => {
 const restoreSession = async () => {
       try {
-        const token = await AsyncStorage.getItem('token');
+        const token = await SecureStore.getItemAsync('token');
         const userRaw = await AsyncStorage.getItem('user');
         if (token && userRaw) {
           const cached = JSON.parse(userRaw);
@@ -127,13 +132,7 @@ const restoreSession = async () => {
     };
   }, [user]);
 
-  if (!rehydrated) {
-    return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color={COLORS.textLight} />
-      </View>
-    );
-  }
+  // Removed conditional !rehydrated block to allow Expo Router to mount properly
 
   return (
     <View style={styles.container}>

@@ -3,6 +3,7 @@ import { View, StyleSheet, Image, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { COLORS } from '../src/theme/theme';
 import { loginSuccess } from '../src/store/slices/authSlice';
 
@@ -15,7 +16,7 @@ export default function SplashScreen() {
     const checkSession = async () => {
       try {
         const userStr = await AsyncStorage.getItem('user');
-        const token = await AsyncStorage.getItem('token');
+        const token = await SecureStore.getItemAsync('token');
 
       if (userStr && token) {
           const user = JSON.parse(userStr);

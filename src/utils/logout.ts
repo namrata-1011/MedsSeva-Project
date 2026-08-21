@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { store } from '../store';
 import { logout as authLogout, setLoggingOut } from '../store/slices/authSlice';
 import { clearCart } from '../store/slices/cartSlice';
@@ -24,6 +25,7 @@ export const performLogout = async () => {
 
   try {
     await AsyncStorage.clear();
+    await SecureStore.deleteItemAsync('token');
   } catch {}
 
   store.dispatch(authLogout());
