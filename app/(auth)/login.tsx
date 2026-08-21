@@ -12,6 +12,7 @@ import * as yup from 'yup';
 import { useDispatch } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { tokenStorage } from '../../src/utils/tokenStorage';
 import { loginStart, loginSuccess } from '../../src/store/slices/authSlice';
 import { apiService } from '../../src/services/api';
 
@@ -27,20 +28,25 @@ const loginSchema = yup.object().shape({
     .min(6, 'Password must be at least 6 characters'),
 });
 
+type LoginFormData = yup.InferType<typeof loginSchema>;
+
 export default function LoginScreen() {
   const router = useRouter();
   const dispatch = useDispatch();
-const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const { control: rawControl, handleSubmit, formState: { errors } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
     defaultValues: { mobile: '', password: '' },
   });
-  const control = rawControl as any;
 
-const onSubmit = async (data: any) => {
+  const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     setServerError(null);
     dispatch(loginStart());
@@ -54,8 +60,8 @@ const onSubmit = async (data: any) => {
         role: response.user.role,
         partner: response.user.partner,
       };
-await AsyncStorage.setItem('user', JSON.stringify(fullUserObj));
-      await AsyncStorage.setItem('token', response.token);
+      await AsyncStorage.setItem('user', JSON.stringify(fullUserObj));
+      await tokenStorage.setItem('token', response.token);
       dispatch(loginSuccess(fullUserObj));
 
       const { registerFcmToken } = await import('../../src/services/notificationService');

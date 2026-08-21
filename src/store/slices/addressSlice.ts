@@ -28,12 +28,17 @@ const initialState: AddressState = {
 
 export const fetchAddressesThunk = createAsyncThunk(
   'address/fetchAddresses',
-  async (mobile: string, { getState, rejectWithValue }) => {
+  async (mobile: string | undefined, { getState, rejectWithValue }) => {
     try {
       const state = getState() as RootState;
       const user = state.auth.user;
+      const userMobile = mobile || user?.mobile;
       
-      const response = await apiService.getAddresses(mobile);
+      if (!userMobile) {
+        return [];
+      }
+      
+      const response = await apiService.getAddresses(userMobile);
      return response.map((addr: any) => ({
         id: addr.id,
         type: addr.type,

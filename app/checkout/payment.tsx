@@ -41,12 +41,13 @@ const [isRazorpayVisible, setIsRazorpayVisible] = useState(false);
   const [razorpayKeyId, setRazorpayKeyId] = useState<string>('');
   const [razorpayAmount, setRazorpayAmount] = useState<number>(0);
 
-const processBackendBooking = async (paymentData?: any) => {
+  const processBackendBooking = async (paymentData?: any) => {
     setIsProcessing(true);
     try {
       let response: any;
 
       if (paymentData?.razorpay_payment_id) {
+        console.log('[Booking] Verifying Razorpay payment:', paymentData);
         response = await apiService.verifyPayment({
           razorpay_order_id: paymentData.razorpay_order_id,
           razorpay_payment_id: paymentData.razorpay_payment_id,
@@ -54,11 +55,13 @@ const processBackendBooking = async (paymentData?: any) => {
           bookingId: '',
         });
       } else {
+        const safeDate = booking.selectedDate || new Date(Date.now() + 86400000).toISOString().split('T')[0];
+        const safeSlot = booking.selectedTimeSlot || '08:00 AM - 09:00 AM';
         const payload = {
           testIds: cart.items.filter(i => i.itemType === 'test').map(i => i.id),
           packageIds: cart.items.filter(i => i.itemType === 'package').map(i => i.id),
-          scheduledDate: booking.selectedDate,
-          scheduledSlot: booking.selectedTimeSlot,
+          scheduledDate: safeDate,
+          scheduledSlot: safeSlot,
           patientName: booking.patientDetails?.name || 'Guest User',
           patientAge: booking.patientDetails?.age ? Number(booking.patientDetails.age) : undefined,
           patientGender: booking.patientDetails?.gender || undefined,
@@ -69,7 +72,9 @@ const processBackendBooking = async (paymentData?: any) => {
           paymentMethod: selectedMethod,
           couponCode: booking.appliedCouponCode || undefined,
         };
+        console.log('[Booking] Sending Booking Payload to backend:', JSON.stringify(payload, null, 2));
         response = await apiService.createBooking(payload);
+        console.log('[Booking] SUCCESS! Backend response:', response);
       }
 
       setIsProcessing(false);
@@ -93,13 +98,25 @@ const processBackendBooking = async (paymentData?: any) => {
       router.replace('/checkout/success');
     } catch (err: any) {
       setIsProcessing(false);
-      const errorMessage = err.response?.data?.error || err.message || 'Network Error';
+      console.error('[Booking] ERROR:', {
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message,
+      });
+      const errorDetails = err.response?.data?.details
+        ? err.response.data.details.map((d: any) => `${d.field}: ${d.message}`).join(', ')
+        : '';
+      const errorMessage = errorDetails || err.response?.data?.error || err.message || 'Network Error';
       showError(`Booking Failed: ${errorMessage}`);
     }
   };
 
-const handlePayNow = async () => {
-    if (!selectedMethod) return;
+  const handlePayNow = async () => {
+    console.log('[Booking] handlePayNow clicked with method:', selectedMethod, 'isLabVisit:', isLabVisit);
+    if (!selectedMethod) {
+      showError('Please select a payment method');
+      return;
+    }
 
     if (selectedMethod === 'cash' || selectedMethod === 'lab_walkin') {
       processBackendBooking();

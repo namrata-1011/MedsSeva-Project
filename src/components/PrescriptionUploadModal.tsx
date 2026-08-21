@@ -161,6 +161,7 @@ export function PrescriptionUploadModal({ visible, onClose, onUploadSuccess }: P
       showError('Please select a prescription file before uploading.');
       return;
     }
+    console.log('[Prescription] Starting upload for file:', selectedFile.name, selectedFile.mimeType, 'Size:', selectedFile.size);
     setIsUploading(true);
     try {
       const formData = new FormData();
@@ -172,13 +173,16 @@ export function PrescriptionUploadModal({ visible, onClose, onUploadSuccess }: P
       if (notes.trim()) {
         formData.append('notes', notes.trim());
       }
-      await apiService.uploadPrescription(formData);
+      console.log('[Prescription] Sending FormData to /api/prescriptions/upload...');
+      const res = await apiService.uploadPrescription(formData);
+      console.log('[Prescription] Upload SUCCESS! Cloudinary URL:', res?.data?.fileUrl || res);
       setSelectedFile(null);
       setNotes('');
       if (onUploadSuccess) onUploadSuccess();
       onClose();
       showSuccess('Prescription uploaded successfully. Our team will review it shortly.');
     } catch (error: any) {
+      console.error('[Prescription] Upload ERROR:', error?.response?.data || error?.message);
       const msg = error?.response?.data?.message || 'Upload failed. Please try again.';
       showError(msg);
     } finally {

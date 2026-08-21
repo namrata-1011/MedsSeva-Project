@@ -5,10 +5,11 @@ import { Stack, useRouter } from 'expo-router';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { store, RootState } from '../src/store';
-import { View, StyleSheet, ActivityIndicator, Modal } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Modal, LogBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { COLORS } from '../src/theme/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { tokenStorage } from '../src/utils/tokenStorage';
 import { loginSuccess } from '../src/store/slices/authSlice';
 import * as Notifications from 'expo-notifications';
 import {
@@ -28,26 +29,30 @@ import { GlobalSchedulerOverlay } from '../src/components/GlobalSchedulerOverlay
 import { ToastHost } from '../src/components/ToastHost';
 import { initLogout } from '../src/utils/logout';
 
+LogBox.ignoreLogs([
+  "Can't perform a React state update on a component that hasn't mounted yet",
+]);
+
 const queryClient = new QueryClient();
 
 function AppContent() {
   const dispatch = useDispatch();
   const router = useRouter();
-const user = useSelector((s: RootState) => s.auth.user);
+  const user = useSelector((s: RootState) => s.auth.user);
   const isLoggingOut = useSelector((s: RootState) => s.auth.isLoggingOut);
   const [rehydrated, setRehydrated] = useState(false);
   const notificationListener = useRef<any>(null);
   const responseListener = useRef<any>(null);
   const tokenRefreshUnsub = useRef<(() => void) | null>(null);
 
-useEffect(() => {
+  useEffect(() => {
     initLogout(queryClient, router);
   }, []);
 
   useEffect(() => {
-const restoreSession = async () => {
+    const restoreSession = async () => {
       try {
-        const token = await AsyncStorage.getItem('token');
+        const token = await tokenStorage.getItem('token');
         const userRaw = await AsyncStorage.getItem('user');
         if (token && userRaw) {
           const cached = JSON.parse(userRaw);
@@ -127,13 +132,7 @@ const restoreSession = async () => {
     };
   }, [user]);
 
-  if (!rehydrated) {
-    return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color={COLORS.textLight} />
-      </View>
-    );
-  }
+  // Removed conditional !rehydrated block to allow Expo Router to mount properly
 
   return (
     <View style={styles.container}>

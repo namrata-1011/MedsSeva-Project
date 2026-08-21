@@ -1,12 +1,12 @@
 /*eslint-disabled*/
 import React, { useState, useRef, useEffect, memo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Animated, Modal, Pressable, StatusBar, Platform, Image, DeviceEventEmitter, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, Animated, Modal, Pressable, StatusBar, Platform, Image, DeviceEventEmitter, FlatList, Linking } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path, Circle, Defs, Text as SvgText, TextPath } from 'react-native-svg';
 import * as Location from 'expo-location';
 import { RootState } from '../../src/store';
 import { confirmAndLogout } from '../../src/utils/logout';
@@ -102,12 +102,12 @@ const { data: cmsBanners = [] } = useQuery({
   const getJourneyPath = () => {
     const xLeft = 32; // Center X for Left Icons
     const xRight = journeyWidth - 32; // Center X for Right Icons
-    const rowH = 128; 
+    const rowH = 90; 
     
-    const Y1 = 64; // Row 1 Center (128/2)
-    const Y2 = 64 + rowH; // Row 2 Center
-    const Y3 = 64 + 2 * rowH; // Row 3 Center
-    const Y4 = 64 + 3 * rowH; // Row 4 Center
+    const Y1 = 45; // Row 1 Center (90/2)
+    const Y2 = 45 + rowH; // Row 2 Center
+    const Y3 = 45 + 2 * rowH; // Row 3 Center
+    const Y4 = 45 + 3 * rowH; // Row 4 Center
 
     const YMid1 = (Y1 + Y2) / 2; // Inter-row center boundary 1
     const YMid2 = (Y2 + Y3) / 2; // Inter-row center boundary 2
@@ -154,10 +154,63 @@ const [activeHeroIndex, setActiveHeroIndex] = useState(0);
     }
   };
 
+  const isMountedRef = useRef(true);
   useEffect(() => {
+    isMountedRef.current = true;
     startHeroTimer();
-    return () => stopHeroTimer();
+    return () => {
+      isMountedRef.current = false;
+      stopHeroTimer();
+    };
   }, []);
+
+  // Static Promo Banners Carousel Hooks
+  const staticBanners = [
+    require('../../assets/images/banner1.png'),
+    require('../../assets/images/banner2.png'),
+    require('../../assets/images/banner3.png'),
+    require('../../assets/images/banner4.png'),
+  ];
+  const [activeStaticHeroIndex, setActiveStaticHeroIndex] = useState(0);
+  const staticHeroFlatListRef = useRef<FlatList>(null);
+  const staticHeroTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startStaticHeroTimer = () => {
+    stopStaticHeroTimer();
+    staticHeroTimerRef.current = setInterval(() => {
+      if (!isMountedRef.current) return;
+      setActiveStaticHeroIndex((prevIndex) => {
+        const nextIndex = prevIndex === staticBanners.length - 1 ? 0 : prevIndex + 1;
+        try {
+          staticHeroFlatListRef.current?.scrollToIndex({
+            index: nextIndex,
+            animated: true,
+          });
+        } catch (e) {
+          // ignore layout errors before mount
+        }
+        return nextIndex;
+      });
+    }, 6000);
+  };
+
+  const stopStaticHeroTimer = () => {
+    if (staticHeroTimerRef.current) {
+      clearInterval(staticHeroTimerRef.current);
+    }
+  };
+
+  useEffect(() => {
+    startStaticHeroTimer();
+    return () => stopStaticHeroTimer();
+  }, []);
+
+  const onStaticHeroViewableItemsChanged = useRef(({ viewableItems }: any) => {
+    if (viewableItems && viewableItems.length > 0) {
+      setActiveStaticHeroIndex(viewableItems[0].index || 0);
+    }
+  }).current;
+
 
   const onHeroViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems && viewableItems.length > 0) {
@@ -423,6 +476,41 @@ const filteredTests = activeCategory === 'all'
           )}
         </View>
 
+        {/* Static Promo Banners Carousel */}
+        <View style={[styles.heroCarouselSection, { marginTop: -32 }]}>
+          <FlatList
+            ref={staticHeroFlatListRef}
+            data={staticBanners}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(_, index) => index.toString()}
+            onViewableItemsChanged={onStaticHeroViewableItemsChanged}
+            viewabilityConfig={heroViewabilityConfig}
+            onScrollBeginDrag={stopStaticHeroTimer}
+            onScrollEndDrag={startStaticHeroTimer}
+            renderItem={({ item }) => (
+              <View style={styles.heroSlideWrapper}>
+                <TouchableOpacity activeOpacity={0.95} style={styles.heroSlide}>
+                  <Image
+                    source={item}
+                    style={[styles.heroBannerImage, { height: 170 }]}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+          <View style={styles.heroDotsRow}>
+            {staticBanners.map((_, idx) => (
+              <View
+                key={idx}
+                style={[styles.heroDot, activeStaticHeroIndex === idx && styles.heroDotActive]}
+              />
+            ))}
+          </View>
+        </View>
+
         {/* Browse Tests Section */}
         <View style={styles.sectionHeader}>
           <View style={styles.sectionTitleRow}>
@@ -574,6 +662,85 @@ const filteredTests = activeCategory === 'all'
           </Pressable>
         </Animated.View>
         
+        {/* Why Millions Trust Medsseva */}
+        <LinearGradient 
+          colors={['#E0F2F1', '#F1F8E9']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.trustSection}
+        >
+          <Text style={styles.trustTitle}>
+            <Text style={{ color: '#1E293B' }}>Why millions of Indians{'\n'}</Text>
+            <Text style={{ color: '#1E293B', fontWeight: '800' }}>Trust </Text>
+            <Text style={{ color: '#006D6F', fontWeight: '800' }}>Medsseva Labs</Text>
+          </Text>
+          
+          <View style={styles.trustGrid}>
+            <View style={styles.trustCard}>
+              <MaterialCommunityIcons name="medal-outline" size={24} color="#64748B" />
+              <Text style={styles.trustCardText}>CAP & NABL{'\n'}Accredited Labs</Text>
+            </View>
+            <View style={styles.trustCard}>
+              <MaterialCommunityIcons name="timer-outline" size={24} color="#64748B" />
+              <Text style={styles.trustCardText}>On Time Sample{'\n'}Collection</Text>
+            </View>
+            <View style={styles.trustCard}>
+              <MaterialCommunityIcons name="file-document-outline" size={24} color="#64748B" />
+              <Text style={styles.trustCardText}>Smart Reports in{'\n'}6 Hours</Text>
+            </View>
+            <View style={styles.trustCard}>
+              <MaterialCommunityIcons name="phone-in-talk-outline" size={24} color="#64748B" />
+              <Text style={styles.trustCardText}>Free Report{'\n'}Consultation</Text>
+            </View>
+          </View>
+        </LinearGradient>
+
+        {/* Talk to Health Advisors Banner */}
+        <View style={styles.advisorBanner}>
+          <View style={styles.advisorLeft}>
+            <Text style={styles.advisorTitle}>
+              Talk to our <Text style={{ fontWeight: '800' }}>health advisors</Text> now for attractive discounts on your Bookings
+            </Text>
+            <View style={styles.advisorButtons}>
+              <TouchableOpacity 
+                style={[styles.advisorBtn, { backgroundColor: '#65A30D' }]}
+                onPress={() => Linking.openURL('tel:+910000000000')}
+              >
+                <MaterialCommunityIcons name="phone-outline" size={16} color="#FFFFFF" />
+                <Text style={styles.advisorBtnText}>Call Now</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={[styles.advisorBtn, { backgroundColor: 'transparent', borderWidth: 1, borderColor: '#FFFFFF' }]}
+                onPress={() => Linking.openURL('whatsapp://send?phone=910000000000')}
+              >
+                <MaterialCommunityIcons name="whatsapp" size={16} color="#FFFFFF" />
+                <Text style={styles.advisorBtnText}>Chat With Us</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <Image source={require('../../assets/images/advisor.png')} style={styles.advisorImage} resizeMode="contain" />
+        </View>
+
+        {/* Refer & Earn Banner */}
+        <TouchableOpacity 
+          style={styles.referBanner}
+          activeOpacity={0.9}
+          onPress={() => router.push('/refer')}
+        >
+          <View style={styles.referLeft}>
+            <Text style={styles.referTitle}>Refer &{'\n'}Earn Rewards</Text>
+            <Text style={styles.referSubtitle}>Win iPhone, Earbuds & Smart{'\n'}Watches Every Month</Text>
+            <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" style={{ marginTop: 8 }} />
+          </View>
+          <View style={styles.referRight}>
+            <View style={styles.referGiftsContainer}>
+              <MaterialCommunityIcons name="gift" size={48} color="#FBBF24" style={styles.giftMain} />
+              <MaterialCommunityIcons name="gift-outline" size={32} color="#FFFFFF" style={styles.giftLeft} />
+              <MaterialCommunityIcons name="cellphone" size={38} color="#94A3B8" style={styles.giftRight} />
+            </View>
+          </View>
+        </TouchableOpacity>
+
         {/* Premium Health Checkup Journey Roadmap Section */}
      <TouchableOpacity 
           style={styles.journeyCard}
@@ -601,16 +768,16 @@ const filteredTests = activeCategory === 'all'
               />
               
               {/* Vector Precision Journey Tracking Nodes */}
-              <Circle cx={32} cy={64} r={5} fill="#0D9488" />
-              <Circle cx={journeyWidth - 32} cy={192} r={5} fill="#0D9488" />
-              <Circle cx={32} cy={320} r={5} fill="#0D9488" />
-              <Circle cx={journeyWidth - 32} cy={448} r={5} fill="#0D9488" />
+              <Circle cx={32} cy={45} r={5} fill="#0D9488" />
+              <Circle cx={journeyWidth - 32} cy={135} r={5} fill="#0D9488" />
+              <Circle cx={32} cy={225} r={5} fill="#0D9488" />
+              <Circle cx={journeyWidth - 32} cy={315} r={5} fill="#0D9488" />
             </Svg>
 
             {/* Step 1: Book with Ease */}
             <View style={styles.stepRow}>
               <View style={[styles.iconBoxWrapper, { backgroundColor: '#FFF5EB' }]}>
-                <MaterialCommunityIcons name="calendar-clock-outline" size={28} color="#3B82F6" />
+                <MaterialCommunityIcons name="calendar-clock-outline" size={24} color="#3B82F6" />
               </View>
               <View style={styles.stepTextColLeft}>
                 <Text style={styles.stepTitle}>Book with Ease</Text>
@@ -625,14 +792,14 @@ const filteredTests = activeCategory === 'all'
                 <Text style={[styles.stepDesc, { textAlign: 'right' }]}>Safe & timely sample collection by trained phlebotomist.</Text>
               </View>
               <View style={[styles.iconBoxWrapper, { backgroundColor: '#FFF5EB' }]}>
-                <MaterialCommunityIcons name="home-heart" size={28} color="#F59E0B" />
+                <MaterialCommunityIcons name="home-heart" size={24} color="#F59E0B" />
               </View>
             </View>
 
             {/* Step 3: Secure Sample Transfer */}
             <View style={styles.stepRow}>
               <View style={[styles.iconBoxWrapper, { backgroundColor: '#FFF5EB' }]}>
-                <MaterialCommunityIcons name="truck-check-outline" size={28} color="#10B981" />
+                <MaterialCommunityIcons name="truck-check-outline" size={24} color="#10B981" />
               </View>
               <View style={styles.stepTextColLeft}>
                 <Text style={styles.stepTitle}>Secure Sample Transfer to Labs</Text>
@@ -647,14 +814,22 @@ const filteredTests = activeCategory === 'all'
                 <Text style={[styles.stepDesc, { textAlign: 'right' }]}>Get your reports within 6 hours via WhatsApp, SMS, and Email.</Text>
               </View>
               <View style={[styles.iconBoxWrapper, { backgroundColor: '#FFF5EB' }]}>
-                <MaterialCommunityIcons name="clipboard-pulse-outline" size={28} color="#EF4444" />
+                <MaterialCommunityIcons name="clipboard-pulse-outline" size={24} color="#EF4444" />
               </View>
             </View>
           </View>
         </TouchableOpacity>
         
+        {/* Awards & Footer Section */}
+        <View style={styles.awardsFooter}>
+          <Image 
+            source={require('../../assets/images/award_badge_medsseva.png')} 
+            style={{ width: width * 0.85, height: 260, resizeMode: 'contain' }} 
+          />
+        </View>
+        
         {/* Streamlined bottom spacing for perfect footer alignment */}
-        <View style={{ height: 30 }} />
+        <View style={{ height: 4 }} />
       </ScrollView>
 
       {/* Premium Left Side Drawer Modal */}
@@ -1423,12 +1598,12 @@ heroBannerImage: {
   stepRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 128,
+    height: 90,
   },
   iconBoxWrapper: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
     ...SHADOWS.soft,
@@ -1436,26 +1611,223 @@ heroBannerImage: {
     zIndex: 4,
   },
   stepTextColLeft: {
-    marginLeft: 18,
+    marginLeft: 14,
     flex: 1,
     justifyContent: 'center',
   },
   stepTextColRight: {
-    marginRight: 18,
+    marginRight: 14,
     flex: 1,
     justifyContent: 'center',
   },
   stepTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '800',
     color: '#1E293B',
-    marginBottom: 4,
-    lineHeight: 22,
+    marginBottom: 2,
+    lineHeight: 18,
   },
   stepDesc: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#64748B',
-    lineHeight: 18,
+    lineHeight: 16,
+    fontWeight: '600',
+  },
+  trustSection: {
+    marginHorizontal: 16,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+  },
+  trustTitle: {
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 20,
+    lineHeight: 26,
+  },
+  trustGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  trustCard: {
+    width: '48%',
+    height: 86,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    ...SHADOWS.soft,
+  },
+  trustCardText: {
+    fontSize: 11,
+    color: '#334155',
+    marginLeft: 8,
+    fontWeight: '500',
+    flex: 1,
+  },
+  advisorBanner: {
+    marginHorizontal: 16,
+    backgroundColor: '#0D7C80',
+    borderRadius: 16,
+    flexDirection: 'row',
+    padding: 20,
+    marginBottom: 20,
+    overflow: 'hidden',
+    height: 145,
+  },
+  advisorLeft: {
+    flex: 1,
+    paddingRight: 10,
+    zIndex: 2,
+  },
+  advisorTitle: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 16,
+  },
+  advisorButtons: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  advisorBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    justifyContent: 'center',
+  },
+  advisorBtnText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  advisorImage: {
+    position: 'absolute',
+    right: -20,
+    bottom: -20,
+    width: 130,
+    height: 150,
+  },
+  referBanner: {
+    marginHorizontal: 16,
+    backgroundColor: '#005D5E',
+    borderRadius: 16,
+    flexDirection: 'row',
+    padding: 20,
+    paddingVertical: 16,
+    marginBottom: 20,
+    overflow: 'hidden',
+    height: 145,
+  },
+  referLeft: {
+    flex: 1,
+    paddingRight: 10,
+    zIndex: 2,
+    justifyContent: 'center',
+  },
+  referTitle: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '800',
+    marginBottom: 4,
+  },
+  referSubtitle: {
+    color: '#E2E8F0',
+    fontSize: 11,
+    lineHeight: 16,
+  },
+  referRight: {
+    width: 130,
+    position: 'absolute',
+    right: -10,
+    bottom: -10,
+    height: 150,
+  },
+  referGiftsContainer: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+  },
+  giftMain: {
+    position: 'absolute',
+    bottom: 20,
+    right: 30,
+    transform: [{ rotate: '10deg' }],
+  },
+  giftLeft: {
+    position: 'absolute',
+    bottom: 10,
+    right: 70,
+    transform: [{ rotate: '-15deg' }],
+    opacity: 0.8,
+  },
+  giftRight: {
+    position: 'absolute',
+    bottom: 40,
+    right: 15,
+    transform: [{ rotate: '25deg' }],
+  },
+  awardsFooter: {
+    alignItems: 'center',
+    paddingTop: 16,
+    paddingBottom: 20,
+    paddingHorizontal: 16,
+    marginTop: 8,
+    backgroundColor: 'transparent',
+  },
+  awardBadgeWrapper: {
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  awardBadgeText: {
+    position: 'absolute',
+    fontSize: 22,
+    fontWeight: '900',
+    color: '#94A3B8',
+  },
+  awardTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#94A3B8',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  awardSubtitle: {
+    fontSize: 10,
+    color: '#CBD5E1',
+    fontWeight: '700',
+    marginBottom: 16,
+    textTransform: 'uppercase',
+  },
+  awardLocation: {
+    fontSize: 13,
+    color: '#94A3B8',
+    fontWeight: '600',
+    marginBottom: 24,
+  },
+  stayHealthyText: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#E2E8F0',
+    marginBottom: 8,
+  },
+  madeWithLove: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  madeWithText: {
+    fontSize: 11,
+    color: '#CBD5E1',
     fontWeight: '600',
   },
 });

@@ -180,7 +180,8 @@
       "expo-asset",
       "expo-sharing",
       "expo-web-browser",
-      "expo-background-task"
+      "expo-background-task",
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true

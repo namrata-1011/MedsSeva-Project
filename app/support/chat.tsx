@@ -9,6 +9,7 @@ import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { io, Socket } from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { tokenStorage } from '../../src/utils/tokenStorage';
 import { COLORS, SHADOWS } from '../../src/theme/theme';
 import { apiService } from '../../src/services/api';
 
@@ -78,7 +79,7 @@ const [sending, setSending] = useState(false);
   const initChat = async () => {
     setLoading(true);
     try {
-      const token = await AsyncStorage.getItem('token');
+      const token = await tokenStorage.getItem('token');
       if (!token) return;
 
       const conv: Conversation & { messages: ChatMessage[] } = await apiService.getOrCreateConversation();

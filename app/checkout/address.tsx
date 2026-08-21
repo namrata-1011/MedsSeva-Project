@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { useFocusEffect } from 'expo-router';
-import { Home, Building2, Clock3 } from 'lucide-react-native';
 import { RootState, AppDispatch } from '../../src/store';
 import { setAddress, setAddressId, setBranch, setCollectionMode } from '../../src/store/slices/bookingSlice';
 import { fetchAddressesThunk, removeAddressThunk } from '../../src/store/slices/addressSlice';
@@ -20,17 +19,17 @@ export default function AddressScreen() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   
- const addresses = useSelector((state: RootState) => state.address.addresses);
+  const addresses = useSelector((state: RootState) => state.address.addresses);
   const user = useSelector((state: RootState) => state.auth.user);
   const [addressesLoading, setAddressesLoading] = useState(true);
   
-const [selectedId, setSelectedId] = useState<string | null>(addresses.length > 0 ? addresses[0].id : null);
+  const [selectedId, setSelectedId] = useState<string | null>(addresses.length > 0 ? addresses[0].id : null);
   const [loadingLocation, setLoadingLocation] = useState(false);
   const collectionMode = useSelector((state: RootState) => state.booking.collectionMode);
-const [selectedBranchId, setSelectedBranchId] = useState<string | null>(null);
+  const [selectedBranchId, setSelectedBranchId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
-const { data: branches = [], isLoading: branchesLoading } = useQuery({
+  const { data: branches = [], isLoading: branchesLoading } = useQuery({
     queryKey: ['branches'],
     queryFn: async () => {
       const res = await apiService.getBranches({ isActive: true, labVisit: true });
@@ -39,109 +38,125 @@ const { data: branches = [], isLoading: branchesLoading } = useQuery({
     enabled: collectionMode === 'lab',
   });
 
-  React.useEffect(() => {
-    if (addresses.length > 0 && !selectedId) {
-      const defaultAddr = addresses.find(a => a.type.toLowerCase() === 'home') || addresses[0];
-      setSelectedId(defaultAddr.id);
-    }
-  }, [addresses]);
+  const activeBranch = branches.find((b: any) => b.id === selectedBranchId);
 
-useFocusEffect(
+  useFocusEffect(
     React.useCallback(() => {
-      if (user?.mobile) {
-        setAddressesLoading(true);
-        dispatch(fetchAddressesThunk(user.mobile)).finally(() => {
-          setAddressesLoading(false);
-        });
-      } else {
-        setAddressesLoading(false);
-      }
-    }, [dispatch, user?.mobile])
+      loadAddresses();
+    }, [])
   );
-const handleContinue = () => {
-    if (collectionMode === 'lab') {
-      if (!selectedBranchId) {
-       showInfo('Please select a lab branch to continue.');
-        return;
-      }
-     const branch = branches.find((b: any) => b.id === selectedBranchId);
-      console.log('[BRANCH DEBUG] dispatching setBranch with:', { id: selectedBranchId, name: branch?.name });
-      dispatch(setBranch({ id: selectedBranchId, name: branch?.name || 'Lab Branch' }));
-      dispatch(setAddressId(null));
-      router.push('/checkout/slot');
-      return;
-    }
-    if (!selectedId) return;
-    const selected = addresses.find(a => a.id === selectedId);
-    if (selected) {
-      dispatch(setAddress(selected.address));
-      dispatch(setAddressId(selected.id));
-      router.push('/checkout/slot');
-    }
-  };
-const handleDelete = (id: string) => {
-    setDeleteTarget(id);
-  };
 
-  const confirmDelete = () => {
-    if (!deleteTarget) return;
-    dispatch(removeAddressThunk(deleteTarget));
-    if (selectedId === deleteTarget) {
-      setSelectedId(null);
-    }
-    setDeleteTarget(null);
-  };
-
-  const handleCurrentLocation = async () => {
-    setLoadingLocation(true);
+  const loadAddresses = async () => {
     try {
-      // Request permission
+      setAddressesLoading(true);
+      const result = await dispatch(fetchAddressesThunk()).unwrap();
+      if (result && result.length > 0 && !selectedId) {
+        setSelectedId(result[0].id);
+      }
+    } catch (err: any) {
+      console.log('Error fetching addresses:', err);
+    } finally {
+      setAddressesLoading(false);
+    }
+  };
+
+  const handleUseCurrentLocation = async () => {
+    try {
+      setLoadingLocation(true);
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-     showInfo("Please enable location services in your device settings to fetch the current address.");
+        showError('Permission Denied', 'Location permission is required to detect your address.');
         setLoadingLocation(false);
         return;
       }
 
-      // Fetch Coordinates
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });
 
-      // Reverse Geocoding
-      const geocodes = await Location.reverseGeocodeAsync({
+      const [geocode] = await Location.reverseGeocodeAsync({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
 
-      if (geocodes && geocodes.length > 0) {
-        const geo = geocodes[0];
-        router.push({
-          pathname: '/checkout/add-address',
-          params: {
-            lat: String(location.coords.latitude),
-            lng: String(location.coords.longitude),
-            city: geo.city || geo.subregion || '',
-            state: geo.region || '',
-            pincode: geo.postalCode || '',
-            area: geo.district || geo.subregion || '',
-            street: geo.street || geo.name || '',
-          }
-        } as any);
-      } else {
-        router.push({
-          pathname: '/checkout/add-address',
-          params: {
-            lat: String(location.coords.latitude),
-            lng: String(location.coords.longitude),
-          }
-        } as any);
+      if (geocode) {
+        const addressObj = {
+          label: 'Current Location',
+          addressLine1: `${geocode.name || ''} ${geocode.street || ''}`.trim() || 'Detected Location',
+          addressLine2: `${geocode.subregion || ''} ${geocode.district || ''}`.trim(),
+          city: geocode.city || '',
+          state: geocode.region || '',
+          pincode: geocode.postalCode || '',
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        };
+
+        const res = await apiService.addAddress(addressObj);
+        if (res.data?.success && res.data?.data) {
+          const newAddr = res.data.data;
+          dispatch(fetchAddressesThunk());
+          dispatch(setAddress(newAddr));
+          dispatch(setAddressId(newAddr.id));
+          setSelectedId(newAddr.id);
+          router.push('/checkout/patient');
+        } else {
+          router.push({
+            pathname: '/checkout/add-address',
+            params: {
+              prefillLat: location.coords.latitude,
+              prefillLng: location.coords.longitude,
+              prefillLine1: addressObj.addressLine1,
+              prefillCity: addressObj.city,
+              prefillState: addressObj.state,
+              prefillPincode: addressObj.pincode,
+            }
+          });
+        }
       }
-    } catch (error) {
-      console.warn(error);
-     showError("Could not fetch your device location. Please enter it manually.");
+    } catch (error: any) {
+      showError('Location Error', 'Unable to detect location. Please select address manually.');
     } finally {
       setLoadingLocation(false);
+    }
+  };
+
+  const handleProceed = () => {
+    if (collectionMode === 'lab') {
+      if (!selectedBranchId) {
+        showError('Selection Missing', 'Please select a lab branch to continue');
+        return;
+      }
+      dispatch(setBranch(activeBranch));
+      dispatch(setAddress(null));
+      dispatch(setAddressId(null));
+    } else {
+      if (!selectedId) {
+        showError('Selection Missing', 'Please select an address to continue');
+        return;
+      }
+      const active = addresses.find((a: any) => a.id === selectedId);
+      if (active) {
+        dispatch(setAddress(active));
+        dispatch(setAddressId(active.id));
+        dispatch(setBranch(null));
+      }
+    }
+    router.push('/checkout/slot');
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      await dispatch(removeAddressThunk(deleteTarget)).unwrap();
+      showInfo('Removed', 'Address removed');
+      if (selectedId === deleteTarget) {
+        const remaining = addresses.filter((a: any) => a.id !== deleteTarget);
+        setSelectedId(remaining.length > 0 ? remaining[0].id : null);
+      }
+    } catch (err: any) {
+      showError('Error', err?.message || 'Failed to remove address');
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -162,8 +177,8 @@ const handleDelete = (id: string) => {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <MaterialCommunityIcons name="arrow-left" size={24} color={COLORS.textLight} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Select Address</Text>
-        <View style={{ width: 24 }} />
+        <Text style={styles.headerTitle}>Select Location</Text>
+        <View style={{ width: 40 }} />
       </View>
 
     <ScreenWrapper
@@ -171,7 +186,7 @@ const handleDelete = (id: string) => {
           <TouchableOpacity
             style={[styles.continueBtn, (collectionMode === 'lab' ? !selectedBranchId : !selectedId) && styles.continueBtnDisabled]}
             disabled={collectionMode === 'lab' ? !selectedBranchId : !selectedId}
-            onPress={handleContinue}
+            onPress={handleProceed}
           >
             <Text style={styles.continueBtnText}>Continue to Slot Selection</Text>
           </TouchableOpacity>
@@ -191,7 +206,7 @@ const handleDelete = (id: string) => {
 
         <TouchableOpacity 
           style={[styles.currentLocationCard, loadingLocation && { opacity: 0.6 }]} 
-          onPress={handleCurrentLocation}
+          onPress={handleUseCurrentLocation}
           disabled={loadingLocation}
           activeOpacity={0.7}
         >
@@ -216,8 +231,9 @@ const handleDelete = (id: string) => {
             style={{ flex: 1, paddingVertical: 12, alignItems: 'center', backgroundColor: collectionMode === 'home' ? COLORS.primary : COLORS.surface }}
             onPress={() => dispatch(setCollectionMode('home'))}
           >
-          <View style={{ flexDirection: 'row', alignItems: 'center'}}>
-  <Home
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+  <MaterialCommunityIcons
+    name="home-outline"
     size={16}
     color={collectionMode === 'home' ? COLORS.textLight : COLORS.textSecondary}
   />
@@ -237,7 +253,8 @@ const handleDelete = (id: string) => {
             onPress={() => dispatch(setCollectionMode('lab'))}
           >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-  <Building2
+  <MaterialCommunityIcons
+    name="office-building"
     size={16}
     color={collectionMode === 'lab' ? COLORS.textLight : COLORS.textSecondary}
   />
@@ -285,7 +302,7 @@ const handleDelete = (id: string) => {
                   </View>
                   <Text style={styles.addressText}>{branch.line1}, {branch.city}, {branch.state} - {branch.pincode}</Text>
                   {branch.hours && <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-  <Clock3 size={14} color={COLORS.primary} />
+  <MaterialCommunityIcons name="clock-outline" size={14} color={COLORS.primary} />
   <Text style={[styles.phoneText, { color: COLORS.primary }]}>
     {branch.hours}
   </Text>

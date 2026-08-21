@@ -7,7 +7,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
-import { CheckCircle2 } from 'lucide-react-native';
 import RNBlobUtil from 'react-native-blob-util';
 import { Platform, PermissionsAndroid } from 'react-native';
 import { showSuccess, showError } from '../../src/store/toastStore';

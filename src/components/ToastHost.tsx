@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Text, View, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CheckCircle2, XCircle, Info, X } from 'lucide-react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { toastStore } from '../store/toastStore';
 
 const CONFIG = {
-  success: { icon: CheckCircle2, color: '#10B981', bg: 'rgba(16, 185, 129, 0.12)', border: 'rgba(16, 185, 129, 0.35)' },
-  error: { icon: XCircle, color: '#EF4444', bg: 'rgba(239, 68, 68, 0.12)', border: 'rgba(239, 68, 68, 0.35)' },
-  info: { icon: Info, color: '#006D6F', bg: 'rgba(0, 109, 111, 0.12)', border: 'rgba(0, 109, 111, 0.35)' },
+  success: { icon: 'check-circle' as const, color: '#10B981', bg: 'rgba(16, 185, 129, 0.12)', border: 'rgba(16, 185, 129, 0.35)' },
+  error: { icon: 'alert-circle' as const, color: '#EF4444', bg: 'rgba(239, 68, 68, 0.12)', border: 'rgba(239, 68, 68, 0.35)' },
+  info: { icon: 'information' as const, color: '#006D6F', bg: 'rgba(0, 109, 111, 0.12)', border: 'rgba(0, 109, 111, 0.35)' },
 };
 
 export function ToastHost() {
@@ -17,7 +17,7 @@ export function ToastHost() {
   const opacity = useRef(new Animated.Value(0)).current;
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-useEffect(() => {
+  useEffect(() => {
     const unsub = toastStore.subscribe(setToast);
     return () => { unsub(); };
   }, []);
@@ -48,7 +48,7 @@ useEffect(() => {
 
   if (!toast.visible) return null;
 
-  const { icon: Icon, color, bg, border } = CONFIG[toast.type];
+  const { icon: iconName, color, bg, border } = CONFIG[toast.type];
 
   return (
     <Animated.View
@@ -57,7 +57,7 @@ useEffect(() => {
     >
       <View style={[styles.toast, { backgroundColor: '#FFFFFF', borderColor: border }]}>
         <View style={[styles.iconWrap, { backgroundColor: bg }]}>
-          <Icon size={16} color={color} />
+          <MaterialCommunityIcons name={iconName} size={18} color={color} />
         </View>
         <Text style={styles.message} numberOfLines={2}>{toast.message}</Text>
         {toast.action ? (
@@ -66,7 +66,7 @@ useEffect(() => {
           </Pressable>
         ) : (
           <Pressable onPress={dismiss} hitSlop={8}>
-            <X size={16} color="#9CA3AF" />
+            <MaterialCommunityIcons name="close" size={18} color="#9CA3AF" />
           </Pressable>
         )}
       </View>
