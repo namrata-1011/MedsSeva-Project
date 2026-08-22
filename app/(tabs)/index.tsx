@@ -92,10 +92,13 @@ const { data: packages = [] } = useQuery({
     queryFn: apiService.getAllPackages,
   });
 
-const { data: cmsBanners = [] } = useQuery({
+  const { data: rawCmsBanners } = useQuery({
     queryKey: ['cmsBanners'],
     queryFn: () => apiService.getCmsBanners(),
   });
+  const cmsBanners = Array.isArray(rawCmsBanners)
+    ? rawCmsBanners
+    : (Array.isArray((rawCmsBanners as any)?.banners) ? (rawCmsBanners as any).banners : []);
   // Health Checkup Journey Dynamic S-Curve SVG Path Generator
   const [journeyWidth, setJourneyWidth] = useState(width - 32 - 40); 
   
@@ -407,7 +410,7 @@ const filteredTests = activeCategory === 'all'
 
         {/* Premium Auto-Scrolling Hero Carousel */}
         <View style={styles.heroCarouselSection}>
-    {cmsBanners.length === 0 ? null : (
+          {(!Array.isArray(cmsBanners) || cmsBanners.length === 0) ? null : (
             <>
               <FlatList
                 ref={heroFlatListRef}
