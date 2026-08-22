@@ -33,6 +33,7 @@ const registerSchema = yup.object().shape({
   confirmPassword: yup.string()
     .required('Please confirm your password')
     .oneOf([yup.ref('password')], 'Passwords do not match'),
+  referralCode: yup.string().optional(),
 });
 
 function getPasswordStrength(password: string): number {
@@ -49,7 +50,7 @@ export default function RegisterScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const dispatch = useDispatch();
-const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showAccountSheet, setShowAccountSheet] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -59,6 +60,7 @@ const [isLoading, setIsLoading] = useState(false);
 
   const prefilledMobile = (params?.mobile as string) || '';
   const prefilledName = (params?.name as string) || '';
+  const prefilledReferral = (params?.referralCode as string) || '';
   const isFromOtp = params?.fromOtp === '1';
 
   const { control: rawControl, handleSubmit, setValue, formState: { errors } } = useForm({
@@ -69,6 +71,7 @@ const [isLoading, setIsLoading] = useState(false);
       mobile: prefilledMobile,
       password: '',
       confirmPassword: '',
+      referralCode: prefilledReferral,
     },
   });
   const control = rawControl as any;
@@ -76,21 +79,23 @@ const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (prefilledMobile) setValue('mobile', prefilledMobile);
     if (prefilledName) setValue('name', prefilledName);
-  }, [prefilledMobile, prefilledName]);
+    if (prefilledReferral) setValue('referralCode', prefilledReferral);
+  }, [prefilledMobile, prefilledName, prefilledReferral]);
 
   const onSubmit = async (data: any) => {
-  if (!termsAccepted) {
+    if (!termsAccepted) {
       setServerError('Please accept Terms & Conditions and Privacy Policy.');
       return;
     }
     setIsLoading(true);
     setServerError(null);
     try {
-    const response = await apiService.register({
+      const response = await apiService.register({
         name: data.name,
         email: data.email,
         mobile: data.mobile,
         password: data.password,
+        referralCode: data.referralCode?.trim() || undefined,
       });
 
       if (response.requiresEmailVerification) {
@@ -277,6 +282,32 @@ return (
             )}
           />
           {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>}
+          <Text style={styles.fieldLabel}>
+            Referral Code <Text style={styles.optionalTag}>(Optional)</Text>
+          </Text>
+          <Controller
+            control={control}
+            name="referralCode"
+            render={({ field: { onChange, value } }) => (
+              <View style={styles.inputWrap}>
+                <TextInput
+                  style={[styles.input, { textTransform: 'uppercase' }]}
+                  placeholder="Enter referral code (e.g. NAM5D93H)"
+                  placeholderTextColor="#94A3B8"
+                  value={value}
+                  onChangeText={(text) => onChange(text.toUpperCase())}
+                  autoCapitalize="characters"
+                />
+                {value ? (
+                  <TouchableOpacity onPress={() => onChange('')}>
+                    <MaterialCommunityIcons name="close-circle-outline" size={18} color="#94A3B8" />
+                  </TouchableOpacity>
+                ) : (
+                  <MaterialCommunityIcons name="gift-outline" size={18} color={PRIMARY} />
+                )}
+              </View>
+            )}
+          />
         </View>
 
         <TouchableOpacity style={styles.checkboxRow} onPress={() => setTermsAccepted(!termsAccepted)} activeOpacity={0.8}>
@@ -360,6 +391,7 @@ const styles = StyleSheet.create({
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 16, gap: 8 },
   sectionTitle: { fontSize: 15, fontWeight: '800', color: '#0F172A' },
   fieldLabel: { fontSize: 12, fontWeight: '700', color: '#475569', marginBottom: 6 },
+  optionalTag: { fontSize: 11, fontWeight: '500', color: '#94A3B8' },
   inputWrap: {
     flexDirection: 'row', alignItems: 'center',
     backgroundColor: '#F8FAFC', borderRadius: 10,
