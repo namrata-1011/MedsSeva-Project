@@ -146,7 +146,7 @@ deletePrescription: (id: string) => api.delete(`/prescriptions/${id}`).then(res 
 
 registerFcmToken: (token: string, platform: string) => api.post('/notifications/token/register', { token, platform }).then(res => res.data),
   unregisterFcmToken: (token: string) => api.post('/notifications/token/unregister', { token }).then(res => res.data),
-getCmsBanners: () => api.get('/cms/banners').then(res => res.data),
+  getCmsBanners: () => api.get('/cms/banners').then(res => res.data.banners || []),
   getMyNotifications: (page = 1, limit = 20) => api.get(`/notifications/my?page=${page}&limit=${limit}`).then(res => res.data),
   markNotificationRead: (id: string) => api.patch(`/notifications/my/${id}/read`).then(res => res.data),
   markAllNotificationsRead: () => api.patch('/notifications/my/read-all').then(res => res.data),
