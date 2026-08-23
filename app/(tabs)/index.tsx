@@ -477,7 +477,7 @@ const filteredTests = activeCategory === 'all'
         </View>
 
         {/* Static Promo Banners Carousel */}
-        <View style={[styles.heroCarouselSection, { marginTop: -32 }]}>
+        <View style={[styles.heroCarouselSection, { marginTop: 10 }]}>
           <FlatList
             ref={staticHeroFlatListRef}
             data={staticBanners}
@@ -491,11 +491,11 @@ const filteredTests = activeCategory === 'all'
             onScrollEndDrag={startStaticHeroTimer}
             renderItem={({ item }) => (
               <View style={styles.heroSlideWrapper}>
-                <TouchableOpacity activeOpacity={0.95} style={styles.heroSlide}>
+                <TouchableOpacity activeOpacity={0.95} style={[styles.heroSlide, { borderWidth: 1, borderColor: 'rgba(0,0,0,0.05)', backgroundColor: '#fff' }]}>
                   <Image
                     source={item}
-                    style={[styles.heroBannerImage, { height: 170 }]}
-                    resizeMode="cover"
+                    style={[styles.heroBannerImage, { height: 160 }]}
+                    resizeMode="stretch"
                   />
                 </TouchableOpacity>
               </View>
