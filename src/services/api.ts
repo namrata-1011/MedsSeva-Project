@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SecureStore from 'expo-secure-store';
+import { tokenStorage } from '../utils/tokenStorage';
 
 const getBaseUrl = () => {
   if (!process.env.EXPO_PUBLIC_API_URL) {
@@ -21,7 +21,7 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     try {
-      const token = await SecureStore.getItemAsync('token');
+      const token = await tokenStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -146,7 +146,12 @@ deletePrescription: (id: string) => api.delete(`/prescriptions/${id}`).then(res 
 
 registerFcmToken: (token: string, platform: string) => api.post('/notifications/token/register', { token, platform }).then(res => res.data),
   unregisterFcmToken: (token: string) => api.post('/notifications/token/unregister', { token }).then(res => res.data),
-  getCmsBanners: () => api.get('/cms/banners').then(res => res.data.banners || []),
+  getCmsBanners: () => api.get('/cms/banners').then(res => {
+    if (Array.isArray(res.data)) return res.data;
+    if (res.data && Array.isArray(res.data.banners)) return res.data.banners;
+    if (res.data && Array.isArray(res.data.data)) return res.data.data;
+    return [];
+  }),
   getMyNotifications: (page = 1, limit = 20) => api.get(`/notifications/my?page=${page}&limit=${limit}`).then(res => res.data),
   markNotificationRead: (id: string) => api.patch(`/notifications/my/${id}/read`).then(res => res.data),
   markAllNotificationsRead: () => api.patch('/notifications/my/read-all').then(res => res.data),

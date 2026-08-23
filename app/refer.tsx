@@ -137,7 +137,15 @@ export default function ReferAndEarnScreen() {
           <TouchableOpacity style={styles.referNowBtn} onPress={handleShare}>
             <Text style={styles.referNowBtnText}>Refer Now</Text>
           </TouchableOpacity>
-
+          <View style={styles.inviteBox}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.inviteTitle}>Your Contacts Not on Medsseva Yet?</Text>
+              <Text style={styles.inviteDesc}>Invite them to start their health journey today.</Text>
+            </View>
+            <TouchableOpacity style={styles.inviteBtn} onPress={handleWhatsappInvite}>
+              <Text style={styles.inviteBtnText}>Invite</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
 

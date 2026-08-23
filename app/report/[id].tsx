@@ -5,11 +5,6 @@ import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import ReactNativeBlobUtil from 'react-native-blob-util';
-import {
-  Phone,
-  Mail,
-  Globe,
-} from "lucide-react-native";
 import { COLORS, TYPOGRAPHY, SHADOWS } from '../../src/theme/theme';
 import * as Linking from 'expo-linking';
 import * as Sharing from 'expo-sharing';

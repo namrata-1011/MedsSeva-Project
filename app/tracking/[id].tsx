@@ -7,7 +7,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
-import { CheckCircle2 } from 'lucide-react-native';
 import RNBlobUtil from 'react-native-blob-util';
 import { Platform, PermissionsAndroid } from 'react-native';
 import { showSuccess, showError } from '../../src/store/toastStore';
@@ -276,34 +275,29 @@ const [downloading, setDownloading] = useState(false);
                       <MaterialCommunityIcons name="file-check-outline" size={15} color="#059669" />
                       <Text style={{ fontSize: 13, fontWeight: '700', color: '#065F46' }}>Invoice Generated</Text>
                     </View>
-                    <View style={{ flexDirection: 'row', gap: 10 }}>
-                      <TouchableOpacity
-                        onPress={() => Linking.openURL(liveBooking.payment.invoiceUrl)}
-                        style={{
-                          flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-                          backgroundColor: '#059669', borderRadius: 10, paddingVertical: 10, gap: 6,
-                        }}
-                      >
-                        <MaterialCommunityIcons name="eye-outline" size={16} color="#fff" />
-                        <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>View Invoice</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={handleDownloadInvoice}
-                        disabled={downloading}
-                        style={{
-                          flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-                          backgroundColor: downloading ? '#93C5FD' : '#0284C7', borderRadius: 10, paddingVertical: 10, gap: 6,
-                        }}
-                      >
-                        {downloading
-                          ? <ActivityIndicator size="small" color="#fff" />
-                          : <MaterialCommunityIcons name="download-outline" size={16} color="#fff" />
-                        }
-                        <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>
-                          {downloading ? 'Downloading...' : 'Download'}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity
+                      onPress={handleDownloadInvoice}
+                      disabled={downloading}
+                      style={{
+                        width: '100%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: downloading ? '#93C5FD' : '#0284C7',
+                        borderRadius: 10,
+                        paddingVertical: 11,
+                        gap: 8,
+                      }}
+                    >
+                      {downloading ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                      ) : (
+                        <MaterialCommunityIcons name="download-outline" size={18} color="#fff" />
+                      )}
+                      <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>
+                        {downloading ? 'Downloading...' : 'Download Invoice'}
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 ) : currentStatusRank >= 6 ? (
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>

@@ -8,7 +8,7 @@ import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SecureStore from 'expo-secure-store';
+import { tokenStorage } from '../../src/utils/tokenStorage';
 import { COLORS, SHADOWS } from '../../src/theme/theme';
 import { showError, showInfo } from '../../src/store/toastStore';
 import { loginSuccess } from '../../src/store/slices/authSlice';
@@ -52,7 +52,7 @@ export default function PartnerLoginScreen() {
       };
 
       await AsyncStorage.setItem('user', JSON.stringify(userObj));
-      await SecureStore.setItemAsync('token', response.token);
+      await tokenStorage.setItem('token', response.token);
       dispatch(loginSuccess(userObj));
       router.replace('/(partner)/home');
     } catch (error: any) {

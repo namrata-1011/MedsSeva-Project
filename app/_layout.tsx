@@ -9,7 +9,7 @@ import { View, StyleSheet, ActivityIndicator, Modal, LogBox } from 'react-native
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { COLORS } from '../src/theme/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SecureStore from 'expo-secure-store';
+import { tokenStorage } from '../src/utils/tokenStorage';
 import { loginSuccess } from '../src/store/slices/authSlice';
 import * as Notifications from 'expo-notifications';
 import {
@@ -38,21 +38,21 @@ const queryClient = new QueryClient();
 function AppContent() {
   const dispatch = useDispatch();
   const router = useRouter();
-const user = useSelector((s: RootState) => s.auth.user);
+  const user = useSelector((s: RootState) => s.auth.user);
   const isLoggingOut = useSelector((s: RootState) => s.auth.isLoggingOut);
   const [rehydrated, setRehydrated] = useState(false);
   const notificationListener = useRef<any>(null);
   const responseListener = useRef<any>(null);
   const tokenRefreshUnsub = useRef<(() => void) | null>(null);
 
-useEffect(() => {
+  useEffect(() => {
     initLogout(queryClient, router);
   }, []);
 
   useEffect(() => {
-const restoreSession = async () => {
+    const restoreSession = async () => {
       try {
-        const token = await SecureStore.getItemAsync('token');
+        const token = await tokenStorage.getItem('token');
         const userRaw = await AsyncStorage.getItem('user');
         if (token && userRaw) {
           const cached = JSON.parse(userRaw);
