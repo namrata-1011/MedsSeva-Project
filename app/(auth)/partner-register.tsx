@@ -10,7 +10,9 @@ import { COLORS, SHADOWS } from '../../src/theme/theme';
 import { showError, showInfo } from '../../src/store/toastStore';
 import { apiService } from '../../src/services/api';
 import * as Location from 'expo-location';
-const PARTNER_ROLES = ['Phlebotomist', 'Lab Technician', 'Lab Assistant', 'Sample Collector'];
+import partnerData from '../../src/mocks/partner.json';
+
+const { PARTNER_ROLES } = partnerData;
 
 export default function PartnerRegisterScreen() {
   const router = useRouter();

@@ -10,10 +10,9 @@ import Toast from 'react-native-toast-message';
 
 import { apiService } from '@/src/services/api';
 import { COLORS, SHADOWS } from '@/src/theme/theme';
+import partnerData from '@/src/mocks/partner.json';
 
-const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const TIMES = ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
-const MAX_BOOKINGS = [5, 8, 10, 12, 15, 20];
+const { DAYS, TIMES, MAX_BOOKINGS } = partnerData;
 
 interface AvailabilityConfig {
   workingDays: string[];

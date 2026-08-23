@@ -22,6 +22,7 @@ interface User {
   altMobile?: string;
   gender?: string;
   bloodGroup?: string;
+  referralCode?: string;
   partner?: PartnerInfo;
 }
 

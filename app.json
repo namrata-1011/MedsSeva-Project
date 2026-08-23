@@ -68,6 +68,7 @@
       "@react-native-firebase/app",
       "@react-native-google-signin/google-signin",
       "./plugins/fixFirebaseMessagingManifest.js",
+      "./plugins/withRazorpayNamespace.js",
       [
         "expo-document-picker",
         {
@@ -169,8 +170,8 @@
         "expo-build-properties",
         {
           "android": {
-            "compileSdkVersion": 36,
-            "targetSdkVersion": 36,
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
             "minSdkVersion": 24,
             "kotlinVersion": "2.1.20"
           }

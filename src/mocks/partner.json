@@ -1,0 +1,36 @@
+{
+  "PARTNER_ROLES": [
+    "Phlebotomist",
+    "Lab Technician",
+    "Lab Assistant",
+    "Sample Collector"
+  ],
+  "DAYS": [
+    "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+  ],
+  "TIMES": [
+    "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", 
+    "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"
+  ],
+  "MAX_BOOKINGS": [5, 8, 10, 12, 15, 20],
+  "LEGAL_ITEMS": [
+    {
+      "icon": "file-document-outline",
+      "label": "Terms & Conditions",
+      "subtitle": "Our terms of service",
+      "type": "terms"
+    },
+    {
+      "icon": "shield-lock-outline",
+      "label": "Privacy Policy",
+      "subtitle": "How we handle your data",
+      "type": "privacy"
+    },
+    {
+      "icon": "information-outline",
+      "label": "About App",
+      "subtitle": "Version and app information",
+      "type": "about"
+    }
+  ]
+}

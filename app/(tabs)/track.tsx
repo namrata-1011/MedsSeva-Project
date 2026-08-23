@@ -10,37 +10,15 @@ import messaging from '@react-native-firebase/messaging';
 import { COLORS, TYPOGRAPHY } from '../../src/theme/theme';
 import { RootState } from '../../src/store';
 import { apiService } from '../../src/services/api';
+import trackingData from '../../src/mocks/tracking.json';
 
 let MapView: any, Marker: any, Polyline: any;
 MapView = ({ children, style }: any) => <RNView style={style}><Text>Map Placeholder</Text>{children}</RNView>;
 Marker = ({ children }: any) => <RNView>{children}</RNView>;
 Polyline = () => <RNView />;
 
-const STATUS_STEPS = [
-  { key: 'ACCEPTED', label: 'Booking Accepted', icon: 'calendar-check' },
-  { key: 'ON_THE_WAY', label: 'Partner On The Way', icon: 'motorbike' },
-  { key: 'REACHED_LOCATION', label: 'Partner Arrived', icon: 'map-marker-check' },
-  { key: 'SAMPLE_COLLECTED', label: 'Sample Collected', icon: 'test-tube' },
-  { key: 'DELIVERED_TO_LAB', label: 'Delivered to Lab', icon: 'flask' },
-  { key: 'PROCESSING', label: 'Processing', icon: 'cog' },
-  { key: 'REPORT_READY', label: 'Report Ready', icon: 'file-document-check' },
-];
-
-const STATUS_ORDER: Record<string, number> = {
-  PENDING: 0,
-  CONFIRMED: 0,
-  WAITING_FOR_ASSIGNMENT: 0,
-  WAITING_FOR_PARTNER: 0,
-  ASSIGNED: 0,
-  ACCEPTED: 1,
-  ON_THE_WAY: 2,
-  REACHED_LOCATION: 3,
-  SAMPLE_COLLECTED: 4,
-  DELIVERED_TO_LAB: 5,
-  PROCESSING: 6,
-  REPORT_READY: 7,
-  COMPLETED: 8,
-};
+const STATUS_ORDER: Record<string, number> = trackingData.STATUS_ORDER_MAP;
+const STATUS_STEPS = trackingData.STATUS_STEPS;
 
 const getEtaText = (status: string): string => {
   switch (status) {

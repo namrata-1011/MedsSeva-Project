@@ -1,0 +1,47 @@
+{
+  "CITIES": [
+    "Delhi NCR",
+    "Mumbai",
+    "Bengaluru",
+    "Hyderabad",
+    "Pune",
+    "Chennai",
+    "Kolkata",
+    "Ahmedabad"
+  ],
+  "TIME_SLOTS": [
+    "07:00 AM - 08:00 AM",
+    "08:00 AM - 09:00 AM",
+    "09:00 AM - 10:00 AM",
+    "10:00 AM - 11:00 AM",
+    "11:00 AM - 12:00 PM",
+    "12:00 PM - 01:00 PM",
+    "01:00 PM - 02:00 PM",
+    "02:00 PM - 03:00 PM",
+    "03:00 PM - 04:00 PM",
+    "04:00 PM - 05:00 PM",
+    "05:00 PM - 06:00 PM",
+    "06:00 PM - 07:00 PM",
+    "07:00 PM - 08:00 PM"
+  ],
+  "MONTHS": [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ],
+  "BLOOD_GROUPS": [
+    "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", 
+    "A1+", "A1-", "A1B+", "A1B-", "A2+", "A2-", "A2B+", "A2B-", "Bombay (Oh)"
+  ],
+  "ALLOWED_EXTENSIONS": [
+    "jpg", "jpeg", "png", "webp", "pdf", "doc", "docx"
+  ],
+  "ALLOWED_MIME_TYPES": [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/webp",
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ]
+}

@@ -12,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { tokenStorage } from '../../src/utils/tokenStorage';
 import { COLORS, SHADOWS } from '../../src/theme/theme';
 import { apiService } from '../../src/services/api';
+import supportData from '../../src/mocks/support.json';
 
 const SOCKET_URL = process.env.EXPO_PUBLIC_API_URL!.replace('/api', '');
 
@@ -33,14 +34,7 @@ interface Conversation {
   assignedTo?: { user: { name: string } };
 }
 
-const SUGGESTION_CHIPS = [
-  'CBC price?',
-  'Full body?',
-  'SevaWoman?',
-  'SevaMan?',
-  'Free collection?',
-  'Download report?',
-];
+const { SUGGESTION_CHIPS } = supportData;
 
 function formatTime(dateStr: string) {
   return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });

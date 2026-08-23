@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import ScreenWrapper from '../../src/components/ScreenWrapper';
 import { useRouter } from 'expo-router';
+import globalData from '../../src/mocks/global.json';
 import { useDispatch, useSelector } from 'react-redux';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -25,12 +26,7 @@ import { showSuccess, showError } from '../../src/store/toastStore';
 
 const { width } = Dimensions.get('window');
 
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
-const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'A1+', 'A1-', 'A1B+', 'A1B-', 'A2+', 'A2-', 'A2B+', 'A2B-', 'Bombay (Oh)'];
+const { MONTHS, BLOOD_GROUPS } = globalData;
 
 export default function EditProfileScreen() {
   const router = useRouter();

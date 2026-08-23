@@ -4,14 +4,17 @@ import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Clipboard from 'expo-clipboard';
+import { useSelector } from 'react-redux';
+import { RootState } from '../src/store';
 import { COLORS, SHADOWS } from '../src/theme/theme';
 
 const { width } = Dimensions.get('window');
 
-const REFERRAL_CODE = 'NAM5D93H492E';
-
 export default function ReferAndEarnScreen() {
   const router = useRouter();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const REFERRAL_CODE = user?.referralCode || 'NAM5D93H492E';
+
   const [toastMsg, setToastMsg] = React.useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -137,15 +140,7 @@ export default function ReferAndEarnScreen() {
           <TouchableOpacity style={styles.referNowBtn} onPress={handleShare}>
             <Text style={styles.referNowBtnText}>Refer Now</Text>
           </TouchableOpacity>
-          <View style={styles.inviteBox}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.inviteTitle}>Your Contacts Not on Medsseva Yet?</Text>
-              <Text style={styles.inviteDesc}>Invite them to start their health journey today.</Text>
-            </View>
-            <TouchableOpacity style={styles.inviteBtn} onPress={handleWhatsappInvite}>
-              <Text style={styles.inviteBtnText}>Invite</Text>
-            </TouchableOpacity>
-          </View>
+
         </View>
       </ScrollView>
 

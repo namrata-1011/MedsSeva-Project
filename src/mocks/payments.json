@@ -1,0 +1,11 @@
+{
+  "HOME_PAYMENT_METHODS": [
+    { "id": "upi", "name": "Pay Now via UPI", "icon": "qrcode-scan", "description": "Pay instantly. Booking confirmed immediately." },
+    { "id": "cash", "name": "Pay at Home (Cash)", "icon": "cash", "description": "Pay the lab assistant at your doorstep before sample collection." }
+  ],
+  "LAB_PAYMENT_METHODS": [
+    { "id": "lab_walkin", "name": "Pay at Lab Counter", "icon": "hospital-building", "description": "Visit the branch and pay at the reception before your test." }
+  ],
+  "UPI_PROVIDERS": ["GPay", "PhonePe", "Paytm", "BHIM"],
+  "UPI_HANDLES": ["@okaxis", "@ybl", "@paytm", "@upi", "@okicici"]
+}

@@ -12,16 +12,10 @@ import { clearCart } from '../../src/store/slices/cartSlice';
 import { COLORS, TYPOGRAPHY, SHADOWS } from '../../src/theme/theme';
 import { apiService } from '../../src/services/api';
 import { RazorpayWebView } from '../../components/RazorpayWebView';
+import paymentsData from '../../src/mocks/payments.json';
 
-// Payment methods shown depend on collectionMode - computed below from Redux
-const HOME_PAYMENT_METHODS = [
-  { id: 'upi', name: 'Pay Now via UPI', icon: 'qrcode-scan', description: 'Pay instantly. Booking confirmed immediately.' },
-  { id: 'cash', name: 'Pay at Home (Cash)', icon: 'cash', description: 'Pay the lab assistant at your doorstep before sample collection.' },
-];
+const { HOME_PAYMENT_METHODS, LAB_PAYMENT_METHODS } = paymentsData;
 
-const LAB_PAYMENT_METHODS = [
-  { id: 'lab_walkin', name: 'Pay at Lab Counter', icon: 'hospital-building', description: 'Visit the branch and pay at the reception before your test.' },
-];
 export default function PaymentScreen() {
   const router = useRouter();
   const dispatch = useDispatch();

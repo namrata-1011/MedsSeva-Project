@@ -1,0 +1,58 @@
+{
+  "STATUS_ORDER_ARRAY": [
+    "PENDING",
+    "WAITING_FOR_PARTNER",
+    "ASSIGNED",
+    "ACCEPTED",
+    "ON_THE_WAY",
+    "REACHED_LOCATION",
+    "SAMPLE_COLLECTED",
+    "DELIVERING_TO_BRANCH",
+    "DELIVERED_TO_LAB",
+    "PROCESSING",
+    "REPORT_READY",
+    "COMPLETED"
+  ],
+  "STATUS_ORDER_MAP": {
+    "PENDING": 0,
+    "CONFIRMED": 0,
+    "WAITING_FOR_ASSIGNMENT": 0,
+    "WAITING_FOR_PARTNER": 0,
+    "ASSIGNED": 0,
+    "ACCEPTED": 1,
+    "ON_THE_WAY": 2,
+    "REACHED_LOCATION": 3,
+    "SAMPLE_COLLECTED": 4,
+    "DELIVERED_TO_LAB": 5,
+    "PROCESSING": 6,
+    "REPORT_READY": 7,
+    "COMPLETED": 8
+  },
+  "STATUS_STEPS": [
+    { "key": "ACCEPTED", "label": "Booking Accepted", "icon": "calendar-check" },
+    { "key": "ON_THE_WAY", "label": "Partner On The Way", "icon": "motorbike" },
+    { "key": "REACHED_LOCATION", "label": "Partner Arrived", "icon": "map-marker-check" },
+    { "key": "SAMPLE_COLLECTED", "label": "Sample Collected", "icon": "test-tube" },
+    { "key": "DELIVERED_TO_LAB", "label": "Delivered to Lab", "icon": "flask" },
+    { "key": "PROCESSING", "label": "Processing", "icon": "cog" },
+    { "key": "REPORT_READY", "label": "Report Ready", "icon": "file-document-check" }
+  ],
+  "TRACKING_STEPS": [
+    { "id": 1, "title": "Booking Requested", "icon": "clock-outline", "doneAtRank": 0 },
+    { "id": 2, "title": "Partner Assigned", "icon": "account-check", "doneAtRank": 2 },
+    { "id": 3, "title": "On The Way", "icon": "motorbike", "doneAtRank": 4 },
+    { "id": 4, "title": "Arrived", "icon": "map-marker-check", "doneAtRank": 5 },
+    { "id": 5, "title": "Sample Collected", "icon": "test-tube", "doneAtRank": 6 },
+    { "id": 6, "title": "Heading to Lab", "icon": "truck-delivery-outline", "doneAtRank": 7 },
+    { "id": 7, "title": "Reached Lab", "icon": "hospital-building", "doneAtRank": 8 },
+    { "id": 8, "title": "Report Ready", "icon": "file-document-check", "doneAtRank": 10 }
+  ],
+  "MINI_STEPS": [
+    { "label": "Booking\nRequested", "icon": "clock-outline", "doneAtRank": 0 },
+    { "label": "Partner\nAssigned", "icon": "account-check", "doneAtRank": 2 },
+    { "label": "On The\nWay", "icon": "motorbike", "doneAtRank": 4 },
+    { "label": "Sample\nCollected", "icon": "test-tube", "doneAtRank": 6 },
+    { "label": "To\nLab", "icon": "truck-delivery-outline", "doneAtRank": 7 },
+    { "label": "Reached\nLab", "icon": "hospital-building", "doneAtRank": 8 }
+  ]
+}

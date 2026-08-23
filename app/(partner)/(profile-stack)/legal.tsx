@@ -6,27 +6,10 @@ import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { COLORS, SHADOWS } from '@/src/theme/theme';
+import partnerData from '@/src/mocks/partner.json';
 
-const LEGAL_ITEMS = [
-  {
-    icon: 'file-document-outline',
-    label: 'Terms & Conditions',
-    subtitle: 'Our terms of service',
-    type: 'terms',
-  },
-  {
-    icon: 'shield-lock-outline',
-    label: 'Privacy Policy',
-    subtitle: 'How we handle your data',
-    type: 'privacy',
-  },
-  {
-    icon: 'information-outline',
-    label: 'About App',
-    subtitle: 'Version and app information',
-    type: 'about',
-  },
-];
+const { LEGAL_ITEMS } = partnerData;
+
 
 export default function LegalScreen() {
   const router = useRouter();

@@ -19,9 +19,9 @@ import { COLORS, TYPOGRAPHY, SHADOWS } from '../../src/theme/theme';
 import { showError } from '../../src/store/toastStore';
 import { apiService } from '../../src/services/api';
 import { RootState } from '../../src/store';
+import paymentsData from '../../src/mocks/payments.json';
 
-const UPI_PROVIDERS = ['GPay', 'PhonePe', 'Paytm', 'BHIM'];
-const UPI_HANDLES = ['@okaxis', '@ybl', '@paytm', '@upi', '@okicici'];
+const { UPI_PROVIDERS, UPI_HANDLES } = paymentsData;
 
 export default function AddUpiScreen() {
   const router = useRouter();

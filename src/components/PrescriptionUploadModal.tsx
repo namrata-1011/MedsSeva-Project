@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import globalData from '../mocks/global.json';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { useSelector } from 'react-redux';
@@ -28,17 +29,7 @@ const { width, height } = Dimensions.get('window');
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
-const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'pdf', 'doc', 'docx'];
-
-const ALLOWED_MIME_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
-  'application/pdf',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-];
+const { ALLOWED_EXTENSIONS, ALLOWED_MIME_TYPES } = globalData;
 
 interface SelectedFile {
   uri: string;

@@ -13,40 +13,9 @@ import { showSuccess, showError } from '../../src/store/toastStore';
 
 import { COLORS, TYPOGRAPHY, SHADOWS } from '../../src/theme/theme';
 import { apiService } from '../../src/services/api';
-const STATUS_ORDER = [
-  'PENDING',
-  'WAITING_FOR_PARTNER',
-  'ASSIGNED',
-  'ACCEPTED',
-  'ON_THE_WAY',
-  'REACHED_LOCATION',
-  'SAMPLE_COLLECTED',
-  'DELIVERING_TO_BRANCH',
-  'DELIVERED_TO_LAB',
-  'PROCESSING',
-  'REPORT_READY',
-  'COMPLETED',
-];
+import trackingData from '../../src/mocks/tracking.json';
 
-
-const TRACKING_STEPS = [
-  { id: 1, title: 'Booking Requested', icon: 'clock-outline',        doneAtRank: 0  },
-  { id: 2, title: 'Partner Assigned',  icon: 'account-check',        doneAtRank: 2  },
-  { id: 3, title: 'On The Way',        icon: 'motorbike',             doneAtRank: 4  },
-  { id: 4, title: 'Arrived',           icon: 'map-marker-check',     doneAtRank: 5  },
-  { id: 5, title: 'Sample Collected',  icon: 'test-tube',             doneAtRank: 6  },
-  { id: 6, title: 'Heading to Lab',    icon: 'truck-delivery-outline', doneAtRank: 7 },
-  { id: 7, title: 'Reached Lab',       icon: 'hospital-building',    doneAtRank: 8  },
-  { id: 8, title: 'Report Ready',      icon: 'file-document-check',  doneAtRank: 10 },
-];
-const MINI_STEPS = [
-  { label: 'Booking\nRequested', icon: 'clock-outline',          doneAtRank: 0  },
-  { label: 'Partner\nAssigned',  icon: 'account-check',          doneAtRank: 2  },
-  { label: 'On The\nWay',        icon: 'motorbike',               doneAtRank: 4  },
-  { label: 'Sample\nCollected',  icon: 'test-tube',               doneAtRank: 6  },
-  { label: 'To\nLab',            icon: 'truck-delivery-outline',  doneAtRank: 7  },
-  { label: 'Reached\nLab',       icon: 'hospital-building',       doneAtRank: 8  },
-];
+const { STATUS_ORDER_ARRAY: STATUS_ORDER, TRACKING_STEPS, MINI_STEPS } = trackingData;
 const getStatusRank = (status: string): number => {
   const rank = STATUS_ORDER.indexOf(status);
   return rank === -1 ? 0 : rank;
