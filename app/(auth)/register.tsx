@@ -60,7 +60,6 @@ export default function RegisterScreen() {
 
   const prefilledMobile = (params?.mobile as string) || '';
   const prefilledName = (params?.name as string) || '';
-  const prefilledReferral = (params?.referralCode as string) || '';
   const isFromOtp = params?.fromOtp === '1';
 
   const { control: rawControl, handleSubmit, setValue, formState: { errors } } = useForm({
@@ -71,7 +70,7 @@ export default function RegisterScreen() {
       mobile: prefilledMobile,
       password: '',
       confirmPassword: '',
-      referralCode: prefilledReferral,
+      referralCode: '',
     },
   });
   const control = rawControl as any;
@@ -79,8 +78,7 @@ export default function RegisterScreen() {
   useEffect(() => {
     if (prefilledMobile) setValue('mobile', prefilledMobile);
     if (prefilledName) setValue('name', prefilledName);
-    if (prefilledReferral) setValue('referralCode', prefilledReferral);
-  }, [prefilledMobile, prefilledName, prefilledReferral]);
+  }, [prefilledMobile, prefilledName]);
 
   const onSubmit = async (data: any) => {
     if (!termsAccepted) {

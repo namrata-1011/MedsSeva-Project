@@ -3,6 +3,7 @@
     "name": "MedsSeva",
     "slug": "medsseva-app",
     "version": "1.0.0",
+    "newArchEnabled": false,
     "orientation": "portrait",
     "icon": "./assets/images/adaptive-icon.png",
     "scheme": "medssevaapp",
@@ -169,10 +170,13 @@
         "expo-build-properties",
         {
           "android": {
-            "compileSdkVersion": 36,
-            "targetSdkVersion": 36,
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
             "minSdkVersion": 24,
-            "kotlinVersion": "2.1.20"
+            "newArchEnabled": false
+          },
+          "ios": {
+            "newArchEnabled": false
           }
         }
       ],

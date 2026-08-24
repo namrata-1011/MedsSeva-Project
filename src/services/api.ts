@@ -195,6 +195,7 @@ submitRating: (data: { bookingId: string; rating: number; review?: string }) =>
   getChatMessages: (conversationId: string, cursor?: string) =>
     api.get(`/chat/conversation/${conversationId}/messages`, { params: cursor ? { cursor } : {} }).then(res => res.data),
   getChatUnreadCount: () => api.get('/chat/conversation/unread').then(res => res.data),
+  getMyReferralInfo: () => api.get('/referrals/my-referral').then(res => res.data),
 };
 export default api;
   
