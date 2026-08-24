@@ -263,53 +263,10 @@ const [downloading, setDownloading] = useState(false);
             )}
 
      {/* Payment status */}
-         {isPaidOnline ? (
-              <View style={[styles.paidBadgeCard, { flexDirection: 'column', alignItems: 'flex-start', gap: 10 }]}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
-                  <Text style={styles.paidBadgeText}>Payment Done</Text>
-                </View>
-  {liveBooking?.payment?.invoiceUrl ? (
-                  <View style={{ width: '100%' }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 }}>
-                      <MaterialCommunityIcons name="file-check-outline" size={15} color="#059669" />
-                      <Text style={{ fontSize: 13, fontWeight: '700', color: '#065F46' }}>Invoice Generated</Text>
-                    </View>
-                    <TouchableOpacity
-                      onPress={handleDownloadInvoice}
-                      disabled={downloading}
-                      style={{
-                        width: '100%',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: downloading ? '#93C5FD' : '#0284C7',
-                        borderRadius: 10,
-                        paddingVertical: 11,
-                        gap: 8,
-                      }}
-                    >
-                      {downloading ? (
-                        <ActivityIndicator size="small" color="#fff" />
-                      ) : (
-                        <MaterialCommunityIcons name="download-outline" size={18} color="#fff" />
-                      )}
-                      <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700' }}>
-                        {downloading ? 'Downloading...' : 'Download Invoice'}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : currentStatusRank >= 6 ? (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                    <ActivityIndicator size="small" color="#059669" />
-                    <Text style={[styles.paidBadgeText, { fontSize: 12, color: '#047857' }]}>Invoice is being generated...</Text>
-                  </View>
-                ) : (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                    <MaterialCommunityIcons name="information-outline" size={14} color="#047857" />
-                    <Text style={[styles.paidBadgeText, { fontSize: 12, color: '#047857' }]}>Invoice will be generated after sample collection</Text>
-                  </View>
-                )}
+            {isPaidOnline ? (
+              <View style={styles.paidBadgeCard}>
+                <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+                <Text style={styles.paidBadgeText}>Payment Done</Text>
               </View>
             ) : liveBooking?.paymentStatus === 'PENDING' && ['ASSIGNED', 'ACCEPTED', 'ON_THE_WAY', 'REACHED_LOCATION'].includes(liveBooking?.status) ? (
               <View style={styles.pendingPayCard}>

@@ -279,20 +279,13 @@ if (isLoading) {
               <MaterialCommunityIcons name="file-check-outline" size={22} color={COLORS.success} />
               <Text style={styles.invoiceReadyText}>Invoice Ready</Text>
             </View>
-      <View style={styles.invoiceBtnRow}>
+            <View style={styles.invoiceBtnRow}>
               <TouchableOpacity
-                style={[styles.invoiceBtn, styles.invoiceBtnPrimary]}
+                style={[styles.invoiceBtn, styles.invoiceBtnPrimary, { flex: 1 }]}
                 onPress={() => handleOpenPdf(invoiceUrl)}
               >
                 <MaterialCommunityIcons name="eye-outline" size={18} color="#fff" />
-                <Text style={styles.invoiceBtnText}>View PDF</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.invoiceBtn, styles.invoiceBtnSecondary]}
-                onPress={() => handleDownloadPdf(invoiceUrl, booking.payment?.invoiceNumber)}
-              >
-                <MaterialCommunityIcons name="download-outline" size={18} color={COLORS.primary} />
-                <Text style={[styles.invoiceBtnText, { color: COLORS.primary }]}>Download PDF</Text>
+                <Text style={styles.invoiceBtnText}>View Invoice</Text>
               </TouchableOpacity>
             </View>
             {booking.payment?.invoiceNumber && (
