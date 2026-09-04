@@ -11,11 +11,12 @@ const PRIMARY = COLORS.primary;
 
 export default function AccountTypeScreen() {
   const router = useRouter();
-  const [selected, setSelected] = useState<'user' | 'partner'>('user');
+  const [selected, setSelected] = useState<'user' | 'partner' | 'other'>('user');
 
   const handleContinue = () => {
     if (selected === 'user') router.push('/(auth)/login');
-    else router.push('/(auth)/partner-login');
+    else if (selected === 'partner') router.push('/(auth)/partner-login');
+    else router.push('/(auth)/other-type');
   };
 
   return (
@@ -56,12 +57,29 @@ export default function AccountTypeScreen() {
           </View>
         </View>
         <Text style={[styles.cardTitle, selected === 'partner' && styles.cardTitleSelected]}>Partner</Text>
-        <Text style={styles.cardDesc}>Join our healthcare network. Offer pharmacy{'\n'}services or diagnostic labs to a wider audience.</Text>
+        <Text style={styles.cardDesc}>Join our pathology lab network. Manage diagnostic{'\n'}center operations and report processing.</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.card, selected === 'other' && styles.cardSelected]}
+        onPress={() => setSelected('other')}
+        activeOpacity={0.9}
+      >
+        <View style={styles.cardTopRow}>
+          <View style={[styles.iconBox, selected === 'other' && styles.iconBoxSelected]}>
+            <MaterialCommunityIcons name="account-group" size={26} color={selected === 'other' ? '#fff' : '#64748B'} />
+          </View>
+          <View style={[styles.radio, selected === 'other' && styles.radioSelected]}>
+            {selected === 'other' && <View style={styles.radioDot} />}
+          </View>
+        </View>
+        <Text style={[styles.cardTitle, selected === 'other' && styles.cardTitleSelected]}>Other</Text>
+        <Text style={styles.cardDesc}>Phlebotomist sample collection, Doctor referrals,{'\n'}and business channel partner portals.</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.continueBtn} onPress={handleContinue} activeOpacity={0.85}>
         <Text style={styles.continueBtnText}>
-          Continue as {selected === 'user' ? 'User' : 'Partner'}
+          Continue as {selected === 'user' ? 'User' : selected === 'partner' ? 'Partner' : 'Other'}
         </Text>
         <MaterialCommunityIcons name="chevron-right" size={20} color="#fff" />
       </TouchableOpacity>
