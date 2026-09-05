@@ -15,7 +15,7 @@
       "package": "com.kanha0415.medssevaapp",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyBJyWuAP9KhGnan9fuldH8BIBmYvF_n-io"
+          "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
         }
       },
       "softwareKeyboardLayoutMode": "pan",
@@ -170,8 +170,8 @@
         "expo-build-properties",
         {
           "android": {
-            "compileSdkVersion": 35,
-            "targetSdkVersion": 35,
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36,
             "minSdkVersion": 24,
             "newArchEnabled": false
           },
