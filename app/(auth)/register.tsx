@@ -133,8 +133,16 @@ export default function RegisterScreen() {
           dispatch(loginSuccess(userObj));
           router.replace('/(tabs)');
         } catch (loginError: any) {
-          const loginErrMsg = loginError.response?.data?.error || '';
-        if (loginErrMsg.includes('Invalid')) {
+          const loginErrData = loginError.response?.data;
+          if (loginErrData?.requiresEmailVerification) {
+            router.replace({
+              pathname: '/(auth)/verify-email',
+              params: { email: loginErrData.email || data.email },
+            });
+            return;
+          }
+          const loginErrMsg = loginErrData?.error || '';
+          if (loginErrMsg.includes('Invalid')) {
             setServerError('An account already exists with this mobile number. Please enter the correct password or use Forgot Password.');
           } else {
             setShowAccountSheet(true);
