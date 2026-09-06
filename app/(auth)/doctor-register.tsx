@@ -30,8 +30,17 @@ export default function DoctorRegisterScreen() {
     }
     setIsLoading(true);
     setServerError(null);
+    console.log('[DoctorRegister] Attempting registration with payload:', {
+      name,
+      mobile,
+      email: email || undefined,
+      qualification,
+      registrationNo,
+      specialization: specialization || 'General Medicine / Pathology',
+      designation: designation || 'Consulting Doctor',
+    });
     try {
-      await apiService.registerDoctor({
+      const res = await apiService.registerDoctor({
         name,
         email: email || undefined,
         mobile,
@@ -41,10 +50,17 @@ export default function DoctorRegisterScreen() {
         specialization: specialization || 'General Medicine / Pathology',
         designation: designation || 'Consulting Doctor',
       });
+      console.log('[DoctorRegister] Registration success response:', res);
 
       router.replace('/(auth)/doctor-pending');
     } catch (error: any) {
-      setServerError(error.response?.data?.error || 'Failed to submit registration. Try again.');
+      console.error('[DoctorRegister] Registration request failed:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+      });
+      const errMsg = error.response?.data?.error || error.response?.data?.message || (error.message ? `Error: ${error.message}` : 'Failed to submit registration. Try again.');
+      setServerError(errMsg);
     } finally {
       setIsLoading(false);
     }
