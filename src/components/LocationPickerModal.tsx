@@ -47,7 +47,7 @@ export function LocationPickerModal({ visible, onClose, onSelect, currentLocatio
 
   const { data: cities, isLoading: citiesLoading } = useQuery({ queryKey: ['cities'], queryFn: () => apiService.getCities() });
     const cityList = cities || [];
-    const filteredCities = cityList.filter(c =>
+    const filteredCities = cityList.filter((c: any) =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -127,7 +127,7 @@ export function LocationPickerModal({ visible, onClose, onSelect, currentLocatio
           {/* Render Cities in Padded Scroll Tray */}
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.cityList}>
             <View style={styles.grid}>
-              {filteredCities.map((city) => {
+              {filteredCities.map((city: any) => {
                 const isSelected = currentLocation === city.name;
                 return (
                   <TouchableOpacity

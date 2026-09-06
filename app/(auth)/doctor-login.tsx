@@ -55,7 +55,7 @@ export default function DoctorLoginScreen() {
       await AsyncStorage.setItem('user', JSON.stringify(userObj));
       await tokenStorage.setItem('token', response.token);
       dispatch(loginSuccess(userObj));
-      router.replace('/(tabs)/index');
+      router.replace('/(tabs)' as any);
     } catch (error: any) {
       const err = error.response?.data;
       if (err?.pendingApproval) {

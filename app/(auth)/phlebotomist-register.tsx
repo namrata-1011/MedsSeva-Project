@@ -31,17 +31,15 @@ export default function PhlebotomistRegisterScreen() {
     setIsLoading(true);
     setServerError(null);
     try {
-      await apiService.registerPartner({
+      await apiService.registerPhlebotomist({
         name,
         email: email || undefined,
         mobile,
         password,
-        labName: `${name} (Phlebotomist)`,
-        role: 'PHLEBOTOMIST',
-        address: address || serviceArea || 'Independent',
         qualification,
         experience,
         serviceArea,
+        address: address || serviceArea || 'Independent',
       });
 
       router.replace('/(auth)/phlebotomist-pending');

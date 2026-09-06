@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import ScreenWrapper from '../../src/components/ScreenWrapper';
 import { showError, showInfo } from '../../src/store/toastStore';
+const notifyError = showError as any;
+const notifyInfo = showInfo as any;
 import { ConfirmSheet } from '../../src/components/ConfirmSheet';
 import { useRouter } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
@@ -65,7 +67,7 @@ export default function AddressScreen() {
       setLoadingLocation(true);
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        showError('Permission Denied', 'Location permission is required to detect your address.');
+        notifyError('Permission Denied', 'Location permission is required to detect your address.');
         setLoadingLocation(false);
         return;
       }
@@ -114,7 +116,7 @@ export default function AddressScreen() {
         }
       }
     } catch (error: any) {
-      showError('Location Error', 'Unable to detect location. Please select address manually.');
+      notifyError('Location Error', 'Unable to detect location. Please select address manually.');
     } finally {
       setLoadingLocation(false);
     }
@@ -123,20 +125,20 @@ export default function AddressScreen() {
   const handleProceed = () => {
     if (collectionMode === 'lab') {
       if (!selectedBranchId) {
-        showError('Selection Missing', 'Please select a lab branch to continue');
+        notifyError('Selection Missing', 'Please select a lab branch to continue');
         return;
       }
       dispatch(setBranch(activeBranch));
-      dispatch(setAddress(null));
-      dispatch(setAddressId(null));
+      dispatch(setAddress('' as any));
+      dispatch(setAddressId(''));
     } else {
       if (!selectedId) {
-        showError('Selection Missing', 'Please select an address to continue');
+        notifyError('Selection Missing', 'Please select an address to continue');
         return;
       }
       const active = addresses.find((a: any) => a.id === selectedId);
       if (active) {
-        dispatch(setAddress(active));
+        dispatch(setAddress(active.id || ''));
         dispatch(setAddressId(active.id));
         dispatch(setBranch(null));
       }
@@ -148,7 +150,7 @@ export default function AddressScreen() {
     if (!deleteTarget) return;
     try {
       await dispatch(removeAddressThunk(deleteTarget)).unwrap();
-      showInfo('Removed', 'Address removed');
+      notifyInfo('Removed', 'Address removed');
       if (selectedId === deleteTarget) {
         const remaining = addresses.filter((a: any) => a.id !== deleteTarget);
         setSelectedId(remaining.length > 0 ? remaining[0].id : null);
@@ -364,7 +366,7 @@ export default function AddressScreen() {
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <TouchableOpacity 
-                    onPress={() => handleDelete(addr.id)} 
+                    onPress={() => setDeleteTarget(addr.id)} 
                     style={{ padding: 4, marginRight: 8 }}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >

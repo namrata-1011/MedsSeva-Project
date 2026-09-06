@@ -112,7 +112,9 @@ const [otpError, setOtpError] = useState('');
         mobile: loginResult.user.mobile,
         role: loginResult.user.role,
         uhid: loginResult.user.uhid,
+        referralCode: loginResult.user.referralCode,
         partner: loginResult.user.partner,
+        doctor: loginResult.user.doctor,
       };
       await AsyncStorage.setItem('user', JSON.stringify(userObj));
       await tokenStorage.setItem('token', loginResult.token);
@@ -121,13 +123,31 @@ const [otpError, setOtpError] = useState('');
       const { registerFcmToken } = await import('../../src/services/notificationService');
       registerFcmToken().catch(console.warn);
 
-      if (loginResult.user.role === 'PATHOLOGY_PARTNER') {
+      if (loginResult.user.role === 'PATHOLOGY_PARTNER' || loginResult.user.role === 'EXECUTIVE') {
         router.replace('/(partner)/home');
       } else {
         router.replace('/(tabs)');
       }
     } catch (error: any) {
-      const msg = error.response?.data?.error || 'Incorrect code. Please try again.';
+      const err = error.response?.data;
+      if (err?.pendingApproval) {
+        if (err.role === 'EXECUTIVE') {
+          router.replace('/(auth)/phlebotomist-pending');
+        } else if (err.role === 'PATHOLOGIST') {
+          router.replace('/(auth)/doctor-pending');
+        } else {
+          router.replace('/(auth)/partner-pending');
+        }
+        return;
+      }
+      if (error.response?.status === 404) {
+        router.push({
+          pathname: '/(auth)/register',
+          params: { mobile: mobileNumber, fromOtp: '1' }
+        });
+        return;
+      }
+      const msg = err?.error || 'Incorrect code. Please try again.';
       setOtpError(msg);
     } finally {
       setIsLoading(false);

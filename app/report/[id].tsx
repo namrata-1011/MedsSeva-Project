@@ -192,20 +192,20 @@ return (
               <Text style={styles.brandTagline}>Quality Diagnostics & Precision Care</Text>
             </View>
           </View>
-         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-  <Phone size={12} color="#E0F2FE" style={{ marginRight: 4 }} />
-  <Text style={styles.contactText}>+91 98765 43210</Text>
-</View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <MaterialCommunityIcons name="phone" size={12} color="#E0F2FE" style={{ marginRight: 4 }} />
+            <Text style={styles.contactText}>+91 98765 43210</Text>
+          </View>
 
-<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-  <Mail size={12} color="#E0F2FE" style={{ marginRight: 4 }} />
-  <Text style={styles.contactText}>reports@medsseva.com</Text>
-</View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <MaterialCommunityIcons name="email" size={12} color="#E0F2FE" style={{ marginRight: 4 }} />
+            <Text style={styles.contactText}>reports@medsseva.com</Text>
+          </View>
 
-<View style={{ flexDirection: 'row', alignItems: 'center' }}>
-  <Globe size={12} color="#E0F2FE" style={{ marginRight: 4 }} />
-  <Text style={styles.contactText}>www.medsseva.com</Text>
-</View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <MaterialCommunityIcons name="web" size={12} color="#E0F2FE" style={{ marginRight: 4 }} />
+            <Text style={styles.contactText}>www.medsseva.com</Text>
+          </View>
         </View>
 
         <View style={styles.metaContainer}>

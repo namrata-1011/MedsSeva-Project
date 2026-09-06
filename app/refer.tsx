@@ -16,7 +16,7 @@ const { width } = Dimensions.get('window');
 export default function ReferAndEarnScreen() {
   const router = useRouter();
   const authUser = useSelector((state: RootState) => state.auth?.user);
-  const [referralCode, setReferralCode] = useState<string>(authUser?.referralCode || 'MEDS9999');
+  const [referralCode, setReferralCode] = useState<string>((authUser as any)?.referralCode || 'MEDS9999');
   const [totalReferrals, setTotalReferrals] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 18, fontWeight: '700', color: '#1E293B' },
   scrollContent: { padding: 16 },
 
-  bannerCard: { width: '100%', borderRadius: 16, overflow: 'hidden', marginBottom: 16, backgroundColor: '#F8FAFC', ...SHADOWS.card },
+  bannerCard: { width: '100%', borderRadius: 16, overflow: 'hidden', marginBottom: 16, backgroundColor: '#F8FAFC', ...SHADOWS.soft },
   bannerImage: { width: '100%', height: 280, borderRadius: 16 },
 
   heroSection: { borderRadius: 16, padding: 20, alignItems: 'center', marginBottom: 20 },
