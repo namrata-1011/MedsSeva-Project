@@ -16,11 +16,21 @@ export default function OtherTypeScreen() {
   const [selectedRole, setSelectedRole] = useState<OtherRole>('phlebotomist');
   const [showChannelModal, setShowChannelModal] = useState(false);
 
-  const handleContinue = () => {
+  const handleLogin = () => {
     if (selectedRole === 'phlebotomist') {
       router.push('/(auth)/phlebotomist-login');
     } else if (selectedRole === 'doctor') {
       router.push('/(auth)/doctor-login');
+    } else if (selectedRole === 'channel_partner') {
+      setShowChannelModal(true);
+    }
+  };
+
+  const handleRegister = () => {
+    if (selectedRole === 'phlebotomist') {
+      router.push('/(auth)/phlebotomist-register');
+    } else if (selectedRole === 'doctor') {
+      router.push('/(auth)/doctor-register');
     } else if (selectedRole === 'channel_partner') {
       setShowChannelModal(true);
     }
@@ -50,8 +60,17 @@ export default function OtherTypeScreen() {
             <View style={[styles.iconBox, selectedRole === 'phlebotomist' && styles.iconBoxSelected]}>
               <MaterialCommunityIcons name="needle" size={26} color={selectedRole === 'phlebotomist' ? '#fff' : '#64748B'} />
             </View>
-            <View style={[styles.radio, selectedRole === 'phlebotomist' && styles.radioSelected]}>
-              {selectedRole === 'phlebotomist' && <View style={styles.radioDot} />}
+            <View style={styles.badgeRow}>
+              <TouchableOpacity
+                style={styles.cardActionBadge}
+                onPress={() => router.push('/(auth)/phlebotomist-register')}
+              >
+                <Text style={styles.cardActionBadgeText}>Apply / Register</Text>
+                <MaterialCommunityIcons name="arrow-right" size={12} color={PRIMARY} />
+              </TouchableOpacity>
+              <View style={[styles.radio, selectedRole === 'phlebotomist' && styles.radioSelected]}>
+                {selectedRole === 'phlebotomist' && <View style={styles.radioDot} />}
+              </View>
             </View>
           </View>
           <Text style={[styles.cardTitle, selectedRole === 'phlebotomist' && styles.cardTitleSelected]}>Phlebotomist</Text>
@@ -68,8 +87,17 @@ export default function OtherTypeScreen() {
             <View style={[styles.iconBox, selectedRole === 'doctor' && styles.iconBoxSelected]}>
               <MaterialCommunityIcons name="stethoscope" size={26} color={selectedRole === 'doctor' ? '#fff' : '#64748B'} />
             </View>
-            <View style={[styles.radio, selectedRole === 'doctor' && styles.radioSelected]}>
-              {selectedRole === 'doctor' && <View style={styles.radioDot} />}
+            <View style={styles.badgeRow}>
+              <TouchableOpacity
+                style={styles.cardActionBadge}
+                onPress={() => router.push('/(auth)/doctor-register')}
+              >
+                <Text style={styles.cardActionBadgeText}>Register Doctor</Text>
+                <MaterialCommunityIcons name="arrow-right" size={12} color={PRIMARY} />
+              </TouchableOpacity>
+              <View style={[styles.radio, selectedRole === 'doctor' && styles.radioSelected]}>
+                {selectedRole === 'doctor' && <View style={styles.radioDot} />}
+              </View>
             </View>
           </View>
           <Text style={[styles.cardTitle, selectedRole === 'doctor' && styles.cardTitleSelected]}>Doctor</Text>
@@ -99,12 +127,33 @@ export default function OtherTypeScreen() {
           <Text style={styles.cardDesc}>Franchise and network business partners. Expand healthcare service reach across regions.</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.continueBtn} onPress={handleContinue} activeOpacity={0.85}>
-          <Text style={styles.continueBtnText}>
-            Continue as {selectedRole === 'phlebotomist' ? 'Phlebotomist' : selectedRole === 'doctor' ? 'Doctor' : 'Channel Partner'}
-          </Text>
-          <MaterialCommunityIcons name="chevron-right" size={20} color="#fff" />
-        </TouchableOpacity>
+        {/* Action Buttons for Selected Role */}
+        {selectedRole === 'channel_partner' ? (
+          <TouchableOpacity style={styles.continueBtn} onPress={() => setShowChannelModal(true)} activeOpacity={0.85}>
+            <Text style={styles.continueBtnText}>Continue as Channel Partner</Text>
+            <MaterialCommunityIcons name="chevron-right" size={20} color="#fff" />
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.actionsContainer}>
+            <TouchableOpacity style={styles.continueBtn} onPress={handleLogin} activeOpacity={0.85}>
+              <Text style={styles.continueBtnText}>
+                Login as {selectedRole === 'phlebotomist' ? 'Phlebotomist' : 'Doctor'}
+              </Text>
+              <MaterialCommunityIcons name="login" size={18} color="#fff" />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.registerOutlineBtn} onPress={handleRegister} activeOpacity={0.85}>
+              <MaterialCommunityIcons
+                name={selectedRole === 'phlebotomist' ? 'needle' : 'stethoscope'}
+                size={18}
+                color={PRIMARY}
+              />
+              <Text style={styles.registerOutlineBtnText}>
+                Register as {selectedRole === 'phlebotomist' ? 'Phlebotomist' : 'Doctor'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
         <Text style={styles.copyright}>© {new Date().getFullYear()} MedsSeva Healthcare. All rights reserved.</Text>
       </ScrollView>
@@ -200,18 +249,47 @@ const styles = StyleSheet.create({
   cardTitle: { fontSize: 19, fontWeight: '800', color: '#0F2937', marginBottom: 6 },
   cardTitleSelected: { color: '#0F2937' },
   cardDesc: { fontSize: 13, color: '#5A7080', lineHeight: 19 },
+  cardActionBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#CCFBF1',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#99F6E4',
+  },
+  cardActionBadgeText: { fontSize: 11, fontWeight: '700', color: PRIMARY },
+  actionsContainer: {
+    marginTop: 12,
+    marginBottom: 20,
+    gap: 10,
+  },
   continueBtn: {
     backgroundColor: PRIMARY,
-    height: 54,
+    height: 52,
     borderRadius: 14,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 12,
-    marginBottom: 20,
-    gap: 6,
+    gap: 8,
+    ...SHADOWS.soft,
   },
-  continueBtnText: { fontSize: 16, fontWeight: '800', color: '#fff' },
+  continueBtnText: { fontSize: 15, fontWeight: '800', color: '#fff' },
+  registerOutlineBtn: {
+    backgroundColor: '#fff',
+    height: 50,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: PRIMARY,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+    ...SHADOWS.soft,
+  },
+  registerOutlineBtnText: { fontSize: 15, fontWeight: '800', color: PRIMARY },
   copyright: { fontSize: 12, color: '#7A9AAA', textAlign: 'center' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(15, 23, 42, 0.6)', justifyContent: 'center', alignItems: 'center', padding: 24 },
   modalContent: { backgroundColor: '#fff', borderRadius: 24, padding: 28, alignItems: 'center', width: '100%', maxWidth: 340, ...SHADOWS.soft },
