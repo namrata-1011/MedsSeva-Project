@@ -124,7 +124,22 @@ getBranches: (params?: { isActive?: boolean; homeCollection?: boolean; labVisit?
   getBranchById: (id: string) => api.get(`/branches/${id}`).then(res => res.data),
 updateMe: (data: { name?: string; email?: string; dob?: string; gender?: string; bloodGroup?: string; altMobile?: string }) => api.patch('/users/me', data).then(res => res.data),
   registerPartner: (data: any) => api.post('/auth/register/partner', data).then(res => res.data),
-getPartnerBookings: () => api.get('/partner/bookings').then(res => res.data),
+  uploadPartnerOnboardingDocument: (fileUri: string, mimeType: string, fileName: string, documentType: string, partnerId?: string) => {
+    const formData = new FormData();
+    formData.append('file', {
+      uri: fileUri,
+      type: mimeType || 'application/pdf',
+      name: fileName || `${documentType}.pdf`,
+    } as any);
+    formData.append('documentType', documentType);
+    if (partnerId) formData.append('partnerId', partnerId);
+
+    return api.post('/auth/register/partner-document', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }).then(res => res.data);
+  },
+  getPartnerOnboardingDocuments: () => api.get('/partner/documents').then(res => res.data),
+  getPartnerBookings: () => api.get('/partner/bookings').then(res => res.data),
   getPartnerHistory: () => api.get('/partner/history').then(res => res.data),
 getPartnerNotifications: () => api.get('/partner/notifications').then(res => res.data),
   getBookingOtp: (bookingId: string) => api.get(`/bookings/${bookingId}/collection-otp`).then(res => res.data),
