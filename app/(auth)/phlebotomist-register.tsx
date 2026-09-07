@@ -24,27 +24,40 @@ export default function PhlebotomistRegisterScreen() {
   const [serverError, setServerError] = useState<string | null>(null);
 
   const handleRegister = async () => {
-    if (!name || !mobile || !password || !qualification) {
-      showInfo('Please fill in all mandatory fields.');
+    setServerError(null);
+    if (!name.trim()) {
+      setServerError('Please enter your Full Name.');
+      return;
+    }
+    if (!mobile.trim() || mobile.trim().length !== 10) {
+      setServerError('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+    if (!password || password.length < 6) {
+      setServerError('Password must be at least 6 characters long.');
+      return;
+    }
+    if (!qualification.trim()) {
+      setServerError('Please enter your Qualification / Certification.');
       return;
     }
     setIsLoading(true);
-    setServerError(null);
     try {
       await apiService.registerPhlebotomist({
-        name,
-        email: email || undefined,
-        mobile,
+        name: name.trim(),
+        email: email.trim() || undefined,
+        mobile: mobile.trim(),
         password,
-        qualification,
-        experience,
-        serviceArea,
-        address: address || serviceArea || 'Independent',
+        qualification: qualification.trim(),
+        experience: experience.trim(),
+        serviceArea: serviceArea.trim(),
+        address: address.trim() || serviceArea.trim() || 'Independent',
       });
 
       router.replace('/(auth)/phlebotomist-pending');
     } catch (error: any) {
-      setServerError(error.response?.data?.error || 'Failed to submit application. Try again.');
+      const errMsg = error.response?.data?.error || error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response?.data : null) || error.message || 'Network error. Please verify backend connection.';
+      setServerError(errMsg);
     } finally {
       setIsLoading(false);
     }

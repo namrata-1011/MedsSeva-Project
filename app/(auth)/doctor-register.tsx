@@ -24,42 +24,44 @@ export default function DoctorRegisterScreen() {
   const [serverError, setServerError] = useState<string | null>(null);
 
   const handleRegister = async () => {
-    if (!name || !mobile || !password || !qualification || !registrationNo) {
-      showInfo('Please fill in all mandatory fields.');
+    setServerError(null);
+    if (!name.trim()) {
+      setServerError('Please enter Full Name (Dr.).');
       return;
     }
+    if (!registrationNo.trim()) {
+      setServerError('Please enter your Medical Council Registration No.');
+      return;
+    }
+    if (!mobile.trim() || mobile.trim().length !== 10) {
+      setServerError('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+    if (!password || password.length < 6) {
+      setServerError('Password must be at least 6 characters long.');
+      return;
+    }
+    if (!qualification.trim()) {
+      setServerError('Please enter Medical Degree / Qualification.');
+      return;
+    }
+
     setIsLoading(true);
-    setServerError(null);
-    console.log('[DoctorRegister] Attempting registration with payload:', {
-      name,
-      mobile,
-      email: email || undefined,
-      qualification,
-      registrationNo,
-      specialization: specialization || 'General Medicine / Pathology',
-      designation: designation || 'Consulting Doctor',
-    });
     try {
-      const res = await apiService.registerDoctor({
-        name,
-        email: email || undefined,
-        mobile,
+      await apiService.registerDoctor({
+        name: name.trim(),
+        email: email.trim() || undefined,
+        mobile: mobile.trim(),
         password,
-        qualification,
-        registrationNo,
-        specialization: specialization || 'General Medicine / Pathology',
-        designation: designation || 'Consulting Doctor',
+        qualification: qualification.trim(),
+        registrationNo: registrationNo.trim(),
+        specialization: specialization.trim() || 'General Medicine / Pathology',
+        designation: designation.trim() || 'Consulting Doctor',
       });
-      console.log('[DoctorRegister] Registration success response:', res);
 
       router.replace('/(auth)/doctor-pending');
     } catch (error: any) {
-      console.error('[DoctorRegister] Registration request failed:', {
-        status: error.response?.status,
-        data: error.response?.data,
-        message: error.message,
-      });
-      const errMsg = error.response?.data?.error || error.response?.data?.message || (error.message ? `Error: ${error.message}` : 'Failed to submit registration. Try again.');
+      const errMsg = error.response?.data?.error || error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response?.data : null) || error.message || 'Network error. Please check backend connection.';
       setServerError(errMsg);
     } finally {
       setIsLoading(false);

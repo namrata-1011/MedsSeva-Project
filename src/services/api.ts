@@ -1,13 +1,26 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { tokenStorage } from '../utils/tokenStorage';
 
 const getBaseUrl = () => {
-  if (!process.env.EXPO_PUBLIC_API_URL) {
-    throw new Error('EXPO_PUBLIC_API_URL is not set. Please configure it in your .env file.');
+  let url = (process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000/api').replace(/\/+$/, '');
+
+  // Auto-resolve localhost/127.0.0.1 to actual host IP when running on mobile devices or emulators
+  if (url.includes('localhost') || url.includes('127.0.0.1')) {
+    const hostUri = Constants.expoConfig?.hostUri || (Constants as any).experienceUrl;
+    if (hostUri) {
+      const hostIp = hostUri.split(':')[0];
+      if (hostIp && hostIp !== 'localhost' && hostIp !== '127.0.0.1') {
+        url = url.replace('localhost', hostIp).replace('127.0.0.1', hostIp);
+      }
+    } else if (Platform.OS === 'android') {
+      url = url.replace('localhost', '10.0.2.2').replace('127.0.0.1', '10.0.2.2');
+    }
   }
-  return process.env.EXPO_PUBLIC_API_URL;
+
+  return url;
 };
 
 const api = axios.create({
