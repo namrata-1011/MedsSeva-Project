@@ -56,7 +56,7 @@ export default function PhlebotomistRegisterScreen() {
 
       router.replace('/(auth)/phlebotomist-pending');
     } catch (error: any) {
-      const errMsg = error.response?.data?.error || error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response?.data : null) || error.message || 'Network error. Please verify backend connection.';
+      const errMsg = error.response?.data?.error || error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response?.data : null) || error.message || 'Failed to submit application. Try again.';
       setServerError(errMsg);
     } finally {
       setIsLoading(false);

@@ -24,16 +24,18 @@ export default function DoctorLoginScreen() {
   const [serverError, setServerError] = useState<string | null>(null);
 
   const handleLogin = async () => {
-    if (!identifier || !password) {
+    const cleanIdentifier = identifier.trim();
+    if (!cleanIdentifier || !password) {
       showInfo('Please enter your email/mobile and password.');
       return;
     }
     setIsLoading(true);
     setServerError(null);
     try {
-      const isEmail = identifier.includes('@');
+      const isEmail = cleanIdentifier.includes('@');
       const response = await apiService.login({
-        ...(isEmail ? { email: identifier } : { mobile: identifier }),
+        ...(isEmail ? { email: cleanIdentifier.toLowerCase() } : { mobile: cleanIdentifier }),
+        identifier: cleanIdentifier,
         password,
       });
 
@@ -55,7 +57,7 @@ export default function DoctorLoginScreen() {
       await AsyncStorage.setItem('user', JSON.stringify(userObj));
       await tokenStorage.setItem('token', response.token);
       dispatch(loginSuccess(userObj));
-      router.replace('/(tabs)' as any);
+      router.replace('/(doctor)/home' as any);
     } catch (error: any) {
       const err = error.response?.data;
       if (err?.pendingApproval) {

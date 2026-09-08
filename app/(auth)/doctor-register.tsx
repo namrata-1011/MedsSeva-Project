@@ -61,7 +61,7 @@ export default function DoctorRegisterScreen() {
 
       router.replace('/(auth)/doctor-pending');
     } catch (error: any) {
-      const errMsg = error.response?.data?.error || error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response?.data : null) || error.message || 'Network error. Please check backend connection.';
+      const errMsg = error.response?.data?.error || error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response?.data : null) || error.message || 'Failed to submit registration. Try again.';
       setServerError(errMsg);
     } finally {
       setIsLoading(false);

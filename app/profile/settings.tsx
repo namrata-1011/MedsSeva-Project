@@ -14,6 +14,7 @@ import { COLORS, TYPOGRAPHY, SHADOWS } from '../../src/theme/theme';
 import { ConfirmSheet } from '../../src/components/ConfirmSheet';
 import { performLogout } from '../../src/utils/logout';
 import { apiService } from '../../src/services/api';
+import { showError, showSuccess } from '../../src/store/toastStore';
 
 type SectionItem = {
   icon: string;
@@ -50,6 +51,23 @@ export default function SettingsScreen() {
   const router = useRouter();
   const [showDeleteSheet, setShowDeleteSheet] = useState(false);
   const [showLogoutSheet, setShowLogoutSheet] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    try {
+      await apiService.deleteAccount();
+      setShowDeleteSheet(false);
+      showSuccess('Your account has been deleted successfully.');
+      await performLogout();
+    } catch (err: any) {
+      setShowDeleteSheet(false);
+      const msg = err.response?.data?.error || 'Failed to delete account. Please try again.';
+      showError(msg);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -120,11 +138,11 @@ export default function SettingsScreen() {
         visible={showDeleteSheet}
         title="Delete Account"
         message="This will permanently delete your medical history, reports, and active bookings. This action cannot be reversed."
-        confirmLabel="Delete Account"
+        confirmLabel={isDeleting ? 'Deleting...' : 'Delete Account'}
         cancelLabel="Keep Account"
         confirmDestructive
-        onConfirm={() => setShowDeleteSheet(false)}
-        onCancel={() => setShowDeleteSheet(false)}
+        onConfirm={handleDeleteAccount}
+        onCancel={() => !isDeleting && setShowDeleteSheet(false)}
       />
     </View>
   );

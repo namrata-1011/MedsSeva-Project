@@ -31,8 +31,16 @@ export default function HomeScreen() {
 
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [activePkgCategory, setActivePkgCategory] = useState<string>('all');
-const [isPrescriptionVisible, setPrescriptionVisible] = useState<boolean>(false);
+  const [isPrescriptionVisible, setPrescriptionVisible] = useState<boolean>(false);
   useNotificationPermission();
+
+  useEffect(() => {
+    if (user?.role === 'DOCTOR' || user?.role === 'PATHOLOGIST') {
+      router.replace('/(doctor)/home' as any);
+    } else if (user?.role === 'PATHOLOGY_PARTNER' || user?.role === 'EXECUTIVE') {
+      router.replace('/(partner)/home');
+    }
+  }, [user?.role]);
 
 const [selectedLocation, setSelectedLocation] = useState<string | null>(null);
   const [isLocationPickerOpen, setLocationPickerOpen] = useState<boolean>(false);

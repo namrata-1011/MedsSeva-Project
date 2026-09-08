@@ -23,8 +23,10 @@ export default function SplashScreen() {
           dispatch(loginSuccess(user));
           
           setTimeout(() => {
-            if (user.role === 'PATHOLOGY_PARTNER') {
+            if (user.role === 'PATHOLOGY_PARTNER' || user.role === 'EXECUTIVE') {
               router.replace('/(partner)/home');
+            } else if (user.role === 'DOCTOR' || user.role === 'PATHOLOGIST') {
+              router.replace('/(doctor)/home' as any);
             } else {
               router.replace('/(tabs)');
             }

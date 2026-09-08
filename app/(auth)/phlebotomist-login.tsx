@@ -37,19 +37,44 @@ export default function PhlebotomistLoginScreen() {
         password,
       });
 
-      if (response.user.role !== 'EXECUTIVE' && response.user.role !== 'PATHOLOGY_PARTNER') {
+      const uRole = (response.user?.role || '').toUpperCase();
+      const adminSlug = (response.user?.adminRoleSlug || '').toLowerCase();
+      const adminRole = (response.user?.adminRole || '').toLowerCase();
+      const partnerRole = (response.user?.partner?.role || '').toUpperCase();
+      const designation = (response.user?.designation || '').toLowerCase();
+
+      const isPhlebotomistOrPartner =
+        uRole === 'EXECUTIVE' ||
+        uRole === 'PATHOLOGY_PARTNER' ||
+        partnerRole === 'PHLEBOTOMIST' ||
+        adminSlug === 'executive' ||
+        adminRole.includes('executive') ||
+        adminRole.includes('phlebotomist') ||
+        designation.includes('phlebotomist') ||
+        designation.includes('collector');
+
+      if (!isPhlebotomistOrPartner) {
         setServerError('This login portal is strictly for Collection Partners / Phlebotomists.');
         setIsLoading(false);
         return;
       }
+
+      const effectiveAppRole = (uRole === 'PATHOLOGY_PARTNER') ? 'PATHOLOGY_PARTNER' : 'EXECUTIVE';
 
       const userObj = {
         id: response.user.id,
         name: response.user.name,
         email: response.user.email,
         mobile: response.user.mobile,
-        role: response.user.role,
-        partner: response.user.partner,
+        role: effectiveAppRole,
+        partner: response.user.partner || {
+          id: response.user.id,
+          labName: `${response.user.name} (Phlebotomist)`,
+          role: 'PHLEBOTOMIST',
+          approvalStatus: 'APPROVED',
+          isAvailable: true,
+          rating: 0,
+        },
       };
 
       await AsyncStorage.setItem('user', JSON.stringify(userObj));

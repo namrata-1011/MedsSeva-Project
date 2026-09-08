@@ -67,8 +67,10 @@ export default function LoginScreen() {
       const { registerFcmToken } = await import('../../src/services/notificationService');
       registerFcmToken().catch(console.warn);
 
-      if (response.user.role === 'PATHOLOGY_PARTNER') {
+      if (response.user.role === 'PATHOLOGY_PARTNER' || response.user.role === 'EXECUTIVE') {
         router.replace('/(partner)/home');
+      } else if (response.user.role === 'DOCTOR' || response.user.role === 'PATHOLOGIST') {
+        router.replace('/(doctor)/home' as any);
       } else {
         router.replace('/(tabs)');
       }

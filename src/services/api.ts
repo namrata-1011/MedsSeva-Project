@@ -5,22 +5,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { tokenStorage } from '../utils/tokenStorage';
 
 const getBaseUrl = () => {
-  let url = (process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000/api').replace(/\/+$/, '');
-
-  // Auto-resolve localhost/127.0.0.1 to actual host IP when running on mobile devices or emulators
-  if (url.includes('localhost') || url.includes('127.0.0.1')) {
-    const hostUri = Constants.expoConfig?.hostUri || (Constants as any).experienceUrl;
-    if (hostUri) {
-      const hostIp = hostUri.split(':')[0];
-      if (hostIp && hostIp !== 'localhost' && hostIp !== '127.0.0.1') {
-        url = url.replace('localhost', hostIp).replace('127.0.0.1', hostIp);
-      }
-    } else if (Platform.OS === 'android') {
-      url = url.replace('localhost', '10.0.2.2').replace('127.0.0.1', '10.0.2.2');
-    }
+  const envUrl = process.env.EXPO_PUBLIC_API_URL;
+  if (envUrl && envUrl.trim()) {
+    return envUrl.trim().replace(/\/+$/, '');
   }
-
-  return url;
+  return 'https://medsseva-backend-cnud.onrender.com/api';
 };
 
 const api = axios.create({
@@ -33,6 +22,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
+    console.log(`[API Request] ${config.method?.toUpperCase()} ${config.baseURL || ''}${config.url || ''}`);
     try {
       const token = await tokenStorage.getItem('token');
       if (token) {
@@ -106,6 +96,7 @@ sendOtp: (mobile: string) => api.post('/auth/otp/send', { mobile }).then(res => 
   getBookings: (mobile: string) => api.get(`/bookings?mobile=${encodeURIComponent(mobile)}`).then(res => res.data),
   getBookingById: (id: string) => api.get(`/bookings?id=${id}`).then(res => res.data),
   getMe: () => api.get('/users/me').then(res => res.data),
+  deleteAccount: () => api.delete('/users/me').then(res => res.data),
   addFamilyMember: (data: any) => api.post('/users/family', data).then(res => res.data),
   removeFamilyMember: (id: string) => api.delete(`/users/family/${id}`).then(res => res.data),
 getPaymentMethods: (mobile: string) => api.get(`/payment-methods?mobile=${encodeURIComponent(mobile)}`).then(res => res.data),
@@ -123,6 +114,7 @@ getBranches: (params?: { isActive?: boolean; homeCollection?: boolean; labVisit?
     api.get('/branches', { params }).then(res => res.data),
   getBranchById: (id: string) => api.get(`/branches/${id}`).then(res => res.data),
 updateMe: (data: { name?: string; email?: string; dob?: string; gender?: string; bloodGroup?: string; altMobile?: string }) => api.patch('/users/me', data).then(res => res.data),
+  deleteAccount: () => api.delete('/users/me').then(res => res.data),
   registerPartner: (data: any) => api.post('/auth/register/partner', data).then(res => res.data),
   uploadPartnerOnboardingDocument: (fileUri: string, mimeType: string, fileName: string, documentType: string, partnerId?: string) => {
     const formData = new FormData();
@@ -226,6 +218,26 @@ submitRating: (data: { bookingId: string; rating: number; review?: string }) =>
   getMyReferralInfo: () => api.get('/referrals/my-referral').then(res => res.data),
   registerDoctor: (data: any) => api.post('/auth/register/doctor', data).then(res => res.data),
   registerPhlebotomist: (data: any) => api.post('/auth/register/phlebotomist', data).then(res => res.data),
+
+  // Doctor Portal & Sample Actions
+  getDoctorPortalData: (period?: string) =>
+    api.get('/commissions/doctor/portal-data', { params: period ? { period } : {} }).then(res => res.data),
+  requestDoctorSamplePickup: (data: {
+    patientName: string;
+    patientMobile: string;
+    patientAge?: number;
+    patientGender?: string;
+    testIds?: string[];
+    address?: string;
+    notes?: string;
+  }) => api.post('/doctors/pickup-request', data).then(res => res.data),
+  doctorDirectSampleHandover: (data: {
+    targetBranchId: string;
+    patientName: string;
+    patientMobile?: string;
+    sampleType?: string;
+    notes?: string;
+  }) => api.post('/doctors/direct-handover', data).then(res => res.data),
 };
 export default api;
   

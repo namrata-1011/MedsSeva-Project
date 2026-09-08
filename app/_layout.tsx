@@ -143,7 +143,8 @@ function AppContent() {
         <Stack.Screen name="index" />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-<Stack.Screen name="(partner)" options={{ headerShown: false }} />
+        <Stack.Screen name="(partner)" options={{ headerShown: false }} />
+        <Stack.Screen name="(doctor)" options={{ headerShown: false }} />
         <Stack.Screen name="support" options={{ headerShown: false }} />
       </Stack>
   <GlobalSchedulerOverlay />

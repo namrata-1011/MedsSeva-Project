@@ -125,6 +125,8 @@ const [otpError, setOtpError] = useState('');
 
       if (loginResult.user.role === 'PATHOLOGY_PARTNER' || loginResult.user.role === 'EXECUTIVE') {
         router.replace('/(partner)/home');
+      } else if (loginResult.user.role === 'DOCTOR' || loginResult.user.role === 'PATHOLOGIST') {
+        router.replace('/(doctor)/home' as any);
       } else {
         router.replace('/(tabs)');
       }
