@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, TextInput,
-  ActivityIndicator, StatusBar, Platform, ScrollView
+  ActivityIndicator, StatusBar, Platform
 } from 'react-native';
 import ScreenWrapper from '../../src/components/ScreenWrapper';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, SHADOWS } from '../../src/theme/theme';
-import { showInfo } from '../../src/store/toastStore';
 import { apiService } from '../../src/services/api';
 
 export default function PhlebotomistRegisterScreen() {

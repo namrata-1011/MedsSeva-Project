@@ -96,7 +96,6 @@ sendOtp: (mobile: string) => api.post('/auth/otp/send', { mobile }).then(res => 
   getBookings: (mobile: string) => api.get(`/bookings?mobile=${encodeURIComponent(mobile)}`).then(res => res.data),
   getBookingById: (id: string) => api.get(`/bookings?id=${id}`).then(res => res.data),
   getMe: () => api.get('/users/me').then(res => res.data),
-  deleteAccount: () => api.delete('/users/me').then(res => res.data),
   addFamilyMember: (data: any) => api.post('/users/family', data).then(res => res.data),
   removeFamilyMember: (id: string) => api.delete(`/users/family/${id}`).then(res => res.data),
 getPaymentMethods: (mobile: string) => api.get(`/payment-methods?mobile=${encodeURIComponent(mobile)}`).then(res => res.data),
@@ -238,6 +237,8 @@ submitRating: (data: { bookingId: string; rating: number; review?: string }) =>
     sampleType?: string;
     notes?: string;
   }) => api.post('/doctors/direct-handover', data).then(res => res.data),
+  registerDoctor: (data: any) => api.post('/auth/register/doctor', data).then(res => res.data),
+  registerPhlebotomist: (data: any) => api.post('/auth/register/phlebotomist', data).then(res => res.data),
 };
 export default api;
   
