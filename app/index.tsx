@@ -4,7 +4,6 @@ import { router } from 'expo-router';
 import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { tokenStorage } from '../src/utils/tokenStorage';
-import { COLORS } from '../src/theme/theme';
 import { loginSuccess } from '../src/store/slices/authSlice';
 
 const { width } = Dimensions.get('window');
@@ -18,29 +17,35 @@ export default function SplashScreen() {
         const userStr = await AsyncStorage.getItem('user');
         const token = await tokenStorage.getItem('token');
 
-      if (userStr && token) {
+        if (userStr && token) {
           const user = JSON.parse(userStr);
           dispatch(loginSuccess(user));
           
           setTimeout(() => {
-            if (user.role === 'PATHOLOGY_PARTNER' || user.role === 'EXECUTIVE') {
-              router.replace('/(partner)/home');
+            const isPartnerOrPhlebo =
+              user.role === 'PATHOLOGY_PARTNER' ||
+              user.role === 'EXECUTIVE' ||
+              user.partner?.role === 'PHLEBOTOMIST' ||
+              user.adminRoleSlug === 'executive';
+
+            if (isPartnerOrPhlebo) {
+              router.replace('/(partner)/home' as any);
             } else if (user.role === 'DOCTOR' || user.role === 'PATHOLOGIST') {
               router.replace('/(doctor)/home' as any);
             } else {
-              router.replace('/(tabs)');
+              router.replace('/(tabs)' as any);
             }
           }, 1500);
         } else {
           // No session, redirect to onboarding
           setTimeout(() => {
-            router.replace('/onboarding');
+            router.replace('/onboarding' as any);
           }, 2000);
         }
       } catch (error) {
         console.error('Session check failed:', error);
         setTimeout(() => {
-          router.replace('/onboarding');
+          router.replace('/onboarding' as any);
         }, 2000);
       }
     };
