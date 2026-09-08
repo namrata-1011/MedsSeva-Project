@@ -237,8 +237,7 @@ submitRating: (data: { bookingId: string; rating: number; review?: string }) =>
     sampleType?: string;
     notes?: string;
   }) => api.post('/doctors/direct-handover', data).then(res => res.data),
-  registerDoctor: (data: any) => api.post('/auth/register/doctor', data).then(res => res.data),
-  registerPhlebotomist: (data: any) => api.post('/auth/register/phlebotomist', data).then(res => res.data),
 };
 export default api;
+
   
