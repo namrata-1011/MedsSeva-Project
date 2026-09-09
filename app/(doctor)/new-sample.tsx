@@ -121,8 +121,8 @@ export default function DoctorNewSampleScreen() {
   };
 
   const filteredTests = availableTests.filter(t =>
-    t.name?.toLowerCase().includes(testSearch.toLowerCase()) ||
-    t.code?.toLowerCase().includes(testSearch.toLowerCase())
+    (t.name?.toLowerCase() || '').includes(testSearch.toLowerCase()) ||
+    (t.code?.toLowerCase() || '').includes(testSearch.toLowerCase())
   );
 
   return (

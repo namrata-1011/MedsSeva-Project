@@ -59,9 +59,9 @@ export default function DoctorPatientsScreen() {
     if (search.trim()) {
       const q = search.toLowerCase();
       return (
-        r.patientName?.toLowerCase().includes(q) ||
-        r.bookingCode?.toLowerCase().includes(q) ||
-        r.patientMobile?.includes(q)
+        (r.patientName?.toLowerCase() || '').includes(q) ||
+        (r.bookingCode?.toLowerCase() || '').includes(q) ||
+        (r.patientMobile || '').includes(q)
       );
     }
     return true;
