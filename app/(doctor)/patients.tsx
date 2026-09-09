@@ -119,7 +119,7 @@ export default function DoctorPatientsScreen() {
         ) : (
           <FlatList
             data={filteredReferrals}
-            keyExtractor={item => item.bookingId}
+            keyExtractor={(item: any) => item.bookingId}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
             contentContainerStyle={{ paddingBottom: 60 }}
             ListEmptyComponent={
@@ -129,7 +129,7 @@ export default function DoctorPatientsScreen() {
                 <Text style={styles.emptySub}>Ordered tests and lab reports will appear here.</Text>
               </View>
             }
-            renderItem={({ item: r }) => {
+            renderItem={({ item: r }: any) => {
               const badge = getStatusBadge(r.bookingStatus, !!r.report);
               return (
                 <View style={styles.card}>

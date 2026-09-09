@@ -38,8 +38,12 @@ export default function PartnerHistoryScreen() {
   const [bookings, setBookings] = useState<HistoryBooking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [dateFilter, setDateFilter] = useState<DateFilterType>('All');
+
+type DateFilterType = 'All' | 'Today' | 'Yesterday' | 'This Week' | 'This Month';
 
 const TABS: TabType[] = ['Completed', 'Rejected'];
+const DATE_FILTERS: DateFilterType[] = ['All', 'Today', 'Yesterday', 'This Week', 'This Month'];
 
 const statusMap: Record<TabType, string[]> = {
     'Completed': ['DELIVERED_TO_LAB', 'PROCESSING', 'REPORT_READY', 'COMPLETED'],
@@ -65,7 +69,29 @@ const statusMap: Record<TabType, string[]> = {
     const matchesTab = statusMap[activeTab].includes(b.status);
     const matchesSearch = b.patientName.toLowerCase().includes(search.toLowerCase()) ||
       b.bookingCode.toLowerCase().includes(search.toLowerCase());
-    return matchesTab && matchesSearch;
+      
+    let matchesDate = true;
+    if (dateFilter !== 'All') {
+      const bDate = new Date(b.scheduledDate);
+      const now = new Date();
+      bDate.setHours(0,0,0,0);
+      now.setHours(0,0,0,0);
+      
+      const diffTime = Math.abs(now.getTime() - bDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (dateFilter === 'Today') {
+        matchesDate = diffDays === 0;
+      } else if (dateFilter === 'Yesterday') {
+        matchesDate = diffDays === 1;
+      } else if (dateFilter === 'This Week') {
+        matchesDate = diffDays <= 7;
+      } else if (dateFilter === 'This Month') {
+        matchesDate = diffDays <= 30;
+      }
+    }
+    
+    return matchesTab && matchesSearch && matchesDate;
   });
 
   const renderItem = ({ item }: { item: HistoryBooking }) => (
@@ -138,7 +164,7 @@ const statusMap: Record<TabType, string[]> = {
           </Text>
         </View>
       )}
-<TouchableOpacity style={styles.detailsBtn} onPress={() => router.navigate({ pathname: '/(partner)/booking-detail', params: { bookingData: JSON.stringify(item) } } as any)}>
+<TouchableOpacity style={styles.detailsBtn} onPress={() => router.navigate({ pathname: '/(phlebotomist)/booking-detail', params: { bookingData: JSON.stringify(item) } } as any)}>
         <Text style={styles.detailsBtnText}>Details</Text>
         <MaterialCommunityIcons name="chevron-right" size={16} color={COLORS.primary} />
       </TouchableOpacity>
@@ -162,6 +188,14 @@ const statusMap: Record<TabType, string[]> = {
         {TABS.map(tab => (
           <TouchableOpacity key={tab} style={[styles.tab, activeTab === tab && styles.tabActive]} onPress={() => setActiveTab(tab)}>
             <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>{tab}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={styles.dateFilterRow}>
+        {DATE_FILTERS.map(filter => (
+          <TouchableOpacity key={filter} style={[styles.dateFilterChip, dateFilter === filter && styles.dateFilterChipActive]} onPress={() => setDateFilter(filter)}>
+            <Text style={[styles.dateFilterText, dateFilter === filter && styles.dateFilterTextActive]}>{filter}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -208,6 +242,11 @@ searchWrap: {
   tabActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
   tabText: { fontSize: 13, fontWeight: '600', color: '#64748B' },
   tabTextActive: { color: '#fff' },
+  dateFilterRow: { flexDirection: 'row', paddingHorizontal: 16, marginBottom: 12, gap: 8, flexWrap: 'wrap' },
+  dateFilterChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: '#F1F5F9', borderWidth: 1, borderColor: '#E2E8F0' },
+  dateFilterChipActive: { backgroundColor: '#DBEAFE', borderColor: '#BFDBFE' },
+  dateFilterText: { fontSize: 11, fontWeight: '600', color: '#64748B' },
+  dateFilterTextActive: { color: '#1E3A8A' },
   listContent: { padding: 16, paddingBottom: 40 },
   card: {
     backgroundColor: '#fff', borderRadius: 16, padding: 16,

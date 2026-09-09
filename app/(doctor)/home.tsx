@@ -132,7 +132,7 @@ export default function DoctorHomeScreen() {
         <View style={styles.actionsContainer}>
           <TouchableOpacity
             style={[styles.actionBtn, styles.pickupBtn]}
-            onPress={() => router.push({ pathname: '/(doctor)/new-sample', params: { mode: 'PICKUP' } } as any)}
+            onPress={() => router.navigate('/(doctor)/new-sample?mode=PICKUP' as any)}
             activeOpacity={0.88}
           >
             <View style={styles.actionIconBox}>
@@ -147,7 +147,7 @@ export default function DoctorHomeScreen() {
 
           <TouchableOpacity
             style={[styles.actionBtn, styles.handoverBtn]}
-            onPress={() => router.push({ pathname: '/(doctor)/new-sample', params: { mode: 'HANDOVER' } } as any)}
+            onPress={() => router.navigate('/(doctor)/new-sample?mode=HANDOVER' as any)}
             activeOpacity={0.88}
           >
             <View style={[styles.actionIconBox, { backgroundColor: '#0D9488' }]}>
@@ -222,7 +222,7 @@ export default function DoctorHomeScreen() {
         {/* Recent Referrals & Live Patient Status */}
         <View style={styles.referralsHeader}>
           <Text style={styles.sectionHeading}>Recent Patients & Reports</Text>
-          <TouchableOpacity onPress={() => router.push('/(doctor)/patients' as any)}>
+          <TouchableOpacity onPress={() => router.navigate('/(doctor)/patients' as any)}>
             <Text style={styles.viewAllText}>View All</Text>
           </TouchableOpacity>
         </View>
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 20,
     marginBottom: 20,
-    ...SHADOWS.medium,
+    ...SHADOWS.soft,
   },
   headerTop: { flexDirection: 'row', alignItems: 'center' },
   doctorAvatar: {

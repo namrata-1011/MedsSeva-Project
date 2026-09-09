@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    ...SHADOWS.medium,
+    ...SHADOWS.soft,
   },
   submitBtnText: { fontSize: 16, fontWeight: '900', color: '#FFFFFF' },
 });

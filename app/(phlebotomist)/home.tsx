@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
-  RefreshControl, StatusBar, Switch, ActivityIndicator
+  RefreshControl, StatusBar, Switch, ActivityIndicator, Linking
 } from 'react-native';
 import ScreenWrapper from '../../src/components/ScreenWrapper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -111,7 +111,7 @@ const handleAccept = async (bookingId: string) => {
       setRequests(prev => prev.filter(b => b.id !== bookingId));
       setStats(prev => ({ ...prev, pending: Math.max(0, prev.pending - 1), accepted: prev.accepted + 1 }));
       // Navigate to Bookings tab where the accepted job now appears
-      router.navigate('/(partner)/bookings');
+      router.navigate('/(phlebotomist)/bookings');
     } catch {
      showError('Could not accept booking. Try again.');
     } finally {
@@ -241,7 +241,7 @@ const handleDecline = (bookingId: string) => {
         {/* Recent Requests */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Recent Requests</Text>
-         <TouchableOpacity onPress={() => router.navigate('/(partner)/bookings')}>
+         <TouchableOpacity onPress={() => router.navigate('/(phlebotomist)/bookings')}>
             <Text style={styles.viewAll}>View All</Text>
           </TouchableOpacity>
         </View>
@@ -261,6 +261,20 @@ const handleDecline = (bookingId: string) => {
                 </View>
                 <View style={styles.requestInfo}>
                   <Text style={styles.requestName}>{req.patientName}</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                    {req.patientMobile && (
+                      <TouchableOpacity onPress={() => Linking.openURL(`tel:${req.patientMobile}`)} style={styles.iconActionBtn}>
+                        <MaterialCommunityIcons name="phone" size={14} color="#059669" />
+                        <Text style={styles.iconActionText}>Call</Text>
+                      </TouchableOpacity>
+                    )}
+                    {req.collectionAddress && (
+                      <TouchableOpacity onPress={() => Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(req.collectionAddress)}`)} style={[styles.iconActionBtn, { marginLeft: 10, backgroundColor: '#EFF6FF', borderColor: '#BFDBFE' }]}>
+                        <MaterialCommunityIcons name="google-maps" size={14} color="#2563EB" />
+                        <Text style={[styles.iconActionText, { color: '#2563EB' }]}>Navigate</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
                   <Text style={styles.requestMeta}>
                     {req.distanceKm ? `${req.distanceKm} km away` : ''}{req.collectionAddress ? ` • ${req.collectionAddress}` : ''}
                   </Text>
@@ -384,7 +398,12 @@ notifBtn: {
   },
   requestInfo: { flex: 1 },
   requestName: { fontSize: 15, fontWeight: '700', color: '#0F172A' },
-  requestMeta: { fontSize: 12, color: '#64748B', marginTop: 2 },
+  iconActionBtn: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: '#DCFCE7',
+    borderWidth: 1, borderColor: '#A7F3D0', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, gap: 4
+  },
+  iconActionText: { fontSize: 10, fontWeight: '700', color: '#059669' },
+  requestMeta: { fontSize: 11, color: '#64748B', marginTop: 6 },
   newBadge: { backgroundColor: '#DCFCE7', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
   newBadgeText: { fontSize: 11, fontWeight: '700', color: '#059669' },
   testTagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 },

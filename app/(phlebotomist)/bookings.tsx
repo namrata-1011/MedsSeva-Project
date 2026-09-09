@@ -128,14 +128,14 @@ const getNextStatusLabel = (current: string, paymentStatus: string): string => {
 const handleUpdateStatus = async (booking: Booking) => {
    if (booking.status === 'SAMPLE_COLLECTED') {
 router.push({
-        pathname: '/partner-flow/select-branch',
+        pathname: '/phlebotomist-flow/select-branch',
         params: { bookingId: booking.id },
       } as any);
       return;
     }
     if (booking.status === 'DELIVERING_TO_BRANCH') {
       router.push({
-        pathname: '/partner-flow/deliver-sample',
+        pathname: '/phlebotomist-flow/deliver-sample',
         params: { bookingId: booking.id },
       } as any);
       return;
@@ -156,7 +156,7 @@ router.push({
         }
       } else {
       router.push(
-          `/partner-flow/collect?bookingId=${booking.id}&paymentStatus=${booking.paymentStatus}&otpVerified=${(booking as any).otpVerified ?? false}` as any
+          `/phlebotomist-flow/collect?bookingId=${booking.id}&paymentStatus=${booking.paymentStatus}&otpVerified=${(booking as any).otpVerified ?? false}` as any
         );
       }
       return;
@@ -236,6 +236,10 @@ const handleReject = (bookingId: string) => {
               <View style={styles.addressRow}>
                 <MaterialCommunityIcons name="map-marker-outline" size={13} color="#64748B" />
                 <Text style={styles.addressText} numberOfLines={2}>{item.collectionAddress}</Text>
+                <TouchableOpacity onPress={() => Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(item.collectionAddress!)}`)} style={[styles.iconActionBtn, { backgroundColor: '#EFF6FF', borderColor: '#BFDBFE' }]}>
+                  <MaterialCommunityIcons name="google-maps" size={14} color="#2563EB" />
+                  <Text style={[styles.iconActionText, { color: '#2563EB' }]}>Navigate</Text>
+                </TouchableOpacity>
               </View>
             )}
           </View>
@@ -388,8 +392,13 @@ const styles = StyleSheet.create({
   patientInitial: { fontSize: 18, fontWeight: '900', color: '#fff' },
   patientInfo: { flex: 1 },
   patientName: { fontSize: 16, fontWeight: '700', color: '#0F172A', marginBottom: 4 },
-  addressRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 4 },
+  addressRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 4, marginTop: 4 },
   addressText: { fontSize: 13, color: '#64748B', flex: 1, lineHeight: 18 },
+  iconActionBtn: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: '#DCFCE7',
+    borderWidth: 1, borderColor: '#A7F3D0', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, gap: 4, marginLeft: 6
+  },
+  iconActionText: { fontSize: 10, fontWeight: '700', color: '#059669' },
   testsSection: {
     backgroundColor: '#F8FAFC', borderRadius: 12, padding: 14,
     marginBottom: 14, borderWidth: 1, borderColor: '#F1F5F9',

@@ -3,10 +3,10 @@ import {
   View,
   StyleSheet,
   Keyboard,
-  ViewStyle,
   Platform,
+  StatusBar,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { COLORS } from '../theme/theme';
 
@@ -15,8 +15,8 @@ interface ScreenWrapperProps {
   bottomButton?: React.ReactNode;
   scrollable?: boolean;
   backgroundColor?: string;
-  contentContainerStyle?: ViewStyle;
-  scrollViewStyle?: ViewStyle;
+  contentContainerStyle?: any;
+  scrollViewStyle?: any;
   disableKeyboardDismiss?: boolean;
   refreshControl?: React.ReactElement;
   extraScrollHeight?: number;
@@ -44,7 +44,7 @@ extraScrollHeight = 80,
 
   if (!scrollable) {
     return (
-      <View style={[styles.container, { backgroundColor }]}>
+      <View style={[styles.container, { backgroundColor, paddingTop: (Platform.OS === 'android' ? StatusBar.currentHeight : insets.top) || 0 }]}>
         <View style={[styles.nonScrollContent, contentContainerStyle]}>
           {children}
         </View>
@@ -63,12 +63,15 @@ extraScrollHeight = 80,
   }
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
+    <View style={[styles.container, { backgroundColor, paddingTop: (Platform.OS === 'android' ? StatusBar.currentHeight : insets.top) || 0 }]}>
+      {/* @ts-ignore - KeyboardAwareScrollView types sometimes miss children */}
       <KeyboardAwareScrollView
         style={[styles.scrollView, scrollViewStyle]}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: bottomButton ? 80 + bottomInset : 24 + bottomInset },
+          { 
+            paddingBottom: bottomButton ? 80 + bottomInset : 24 + bottomInset 
+          },
           contentContainerStyle,
         ]}
         keyboardShouldPersistTaps="handled"

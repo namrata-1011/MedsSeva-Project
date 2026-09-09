@@ -26,28 +26,15 @@ export default function DoctorProfileScreen() {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to log out of Doctor Portal?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await tokenStorage.removeItem('token');
-              await AsyncStorage.removeItem('user');
-              dispatch(logout());
-              router.replace('/(auth)/doctor-login' as any);
-            } catch (e) {
-              console.error('Logout error', e);
-            }
-          },
-        },
-      ]
-    );
+  const handleLogout = async () => {
+    try {
+      await tokenStorage.deleteItem('token').catch(() => {});
+      await AsyncStorage.removeItem('user').catch(() => {});
+    } catch (e) {
+      console.error('Storage error', e);
+    }
+    dispatch(logout());
+    router.replace('/(auth)/doctor-login' as any);
   };
 
   const doc = data?.doctor;
