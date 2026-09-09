@@ -34,7 +34,7 @@ const STATUS_COLORS: Record<string, string> = {
   DELIVERED_TO_LAB: COLORS.primary,
 };
 
-export default function PartnerBookingsScreen() {
+export default function PhlebotomistBookingsScreen() {
   const router = useRouter();
   const pathname = usePathname();
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -141,24 +141,10 @@ router.push({
       return;
     }
     if (booking.status === 'REACHED_LOCATION') {
-      if (booking.paymentStatus === 'SUCCESS') {
-        // Online-paid: skip OTP/payment screen, go straight to SAMPLE_COLLECTED
-        setUpdatingId(booking.id);
-        try {
-          await apiService.updateBookingStatus(booking.id, 'SAMPLE_COLLECTED');
-          setBookings(prev =>
-            prev.map(b => b.id === booking.id ? { ...b, status: 'SAMPLE_COLLECTED' } : b)
-          );
-   } catch {
-          showError('Could not update status.');
-        } finally {
-          setUpdatingId(null);
-        }
-      } else {
+      // Always go to the collection screen to scan vials/collect samples, regardless of payment status
       router.push(
           `/phlebotomist-flow/collect?bookingId=${booking.id}&paymentStatus=${booking.paymentStatus}&otpVerified=${(booking as any).otpVerified ?? false}` as any
-        );
-      }
+      );
       return;
     }
     const next = getNextStatus(booking.status);
@@ -343,7 +329,7 @@ const handleReject = (bookingId: string) => {
       />
       <FlatList
         data={bookings}
-        keyExtractor={item => item.id}
+        keyExtractor={(item: any) => item.id}
         renderItem={renderBooking}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
         contentContainerStyle={styles.listContent}

@@ -47,7 +47,7 @@ const infoStyles = StyleSheet.create({
   value: { fontSize: 13, fontWeight: '700', color: '#0F172A', maxWidth: '55%', textAlign: 'right' },
 });
 
-export default function PartnerBookingDetailScreen() {
+export default function PhlebotomistBookingDetailScreen() {
 const { bookingData } = useLocalSearchParams<{ bookingData: string }>();
   const router = useRouter();
   const [booking, setBooking] = useState<any>(null);
@@ -104,7 +104,7 @@ useEffect(() => {
    <TouchableOpacity style={styles.backBtn} onPress={() => router.navigate('/(phlebotomist)/history')} activeOpacity={0.7}>
           <MaterialCommunityIcons name="arrow-left" size={22} color="#0F172A" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Booking Details</Text>
+        <Text style={styles.headerTitle}>Collection Details</Text>
         <View style={{ width: 38 }} />
       </View>
 

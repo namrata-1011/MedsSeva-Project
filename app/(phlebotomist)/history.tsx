@@ -31,7 +31,7 @@ interface HistoryBooking {
   tests?: { name: string }[];
   packages?: { name: string }[];
 }
-export default function PartnerHistoryScreen() {
+export default function PhlebotomistHistoryScreen() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>('Completed');
   const [search, setSearch] = useState('');
@@ -47,7 +47,7 @@ const DATE_FILTERS: DateFilterType[] = ['All', 'Today', 'Yesterday', 'This Week'
 
 const statusMap: Record<TabType, string[]> = {
     'Completed': ['DELIVERED_TO_LAB', 'PROCESSING', 'REPORT_READY', 'COMPLETED'],
-    'Rejected': ['REJECTED_BY_PARTNER'],
+    'Rejected': ['REJECTED_BY_PHLEBOTOMIST', 'REJECTED_BY_PARTNER'],
   };
   const loadHistory = useCallback(async () => {
     try {
@@ -112,13 +112,13 @@ const statusMap: Record<TabType, string[]> = {
           <MaterialCommunityIcons
             name={
               item.status === 'CANCELLED' ? 'close-circle' :
-              item.status === 'REJECTED_BY_PARTNER' ? 'hand-back-left' :
+              item.status === 'REJECTED_BY_PARTNER' || item.status === 'REJECTED_BY_PHLEBOTOMIST' ? 'hand-back-left' :
               'check-circle'
             }
             size={14}
             color={
               item.status === 'CANCELLED' ? '#EF4444' :
-              item.status === 'REJECTED_BY_PARTNER' ? '#D97706' :
+              item.status === 'REJECTED_BY_PARTNER' || item.status === 'REJECTED_BY_PHLEBOTOMIST' ? '#D97706' :
               '#10B981'
             }
           />
@@ -128,7 +128,7 @@ const statusMap: Record<TabType, string[]> = {
             item.status === 'REJECTED_BY_PARTNER' && { color: '#D97706' },
           ]}>
             {item.status === 'CANCELLED' ? 'CANCELLED' :
-             item.status === 'REJECTED_BY_PARTNER' ? 'REJECTED' :
+             item.status === 'REJECTED_BY_PARTNER' || item.status === 'REJECTED_BY_PHLEBOTOMIST' ? 'REJECTED' :
              'COMPLETED'}
           </Text>
         </View>
@@ -207,7 +207,7 @@ const statusMap: Record<TabType, string[]> = {
       ) : (
         <FlatList
           data={filtered}
-          keyExtractor={item => item.id}
+          keyExtractor={(item: any) => item.id}
           renderItem={renderItem}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
           contentContainerStyle={styles.listContent}

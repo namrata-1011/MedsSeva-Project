@@ -111,7 +111,7 @@ export default function DoctorNewSampleScreen() {
         });
         showSuccess('Direct sample handover logged. Sample marked as delivered to lab.');
       }
-      router.replace('/(doctor)/home');
+      router.navigate('/(doctor)/home');
     } catch (err: any) {
       console.error('Submission failed', err);
       showError(err?.response?.data?.error || 'Failed to submit test request');
@@ -131,7 +131,7 @@ export default function DoctorNewSampleScreen() {
       <ScreenWrapper backgroundColor="#F8FAFC" contentContainerStyle={styles.content}>
         {/* Top Header */}
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <TouchableOpacity style={styles.backBtn} onPress={() => router.navigate('/(doctor)/home')}>
             <MaterialCommunityIcons name="arrow-left" size={22} color="#1E293B" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>New Patient Test Request</Text>

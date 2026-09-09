@@ -179,8 +179,8 @@ const handleDecline = (bookingId: string) => {
             )}
           </View>
           <View>
-            <Text style={styles.helloText}>Hello, Partner</Text>
-            <Text style={styles.partnerName}>{user?.name || 'Partner'}</Text>
+            <Text style={styles.helloText}>Hello, Phlebotomist</Text>
+            <Text style={styles.partnerName}>{user?.name || 'Phlebotomist'}</Text>
           </View>
         </View>
         <View style={styles.headerRight}>
@@ -221,12 +221,12 @@ const handleDecline = (bookingId: string) => {
           </View>
           <View style={styles.statsMiniRow}>
             <View style={styles.miniStat}>
-              <Text style={styles.miniStatLabel}>PENDING</Text>
+              <Text style={styles.miniStatLabel}>PENDING / NEW</Text>
               <Text style={[styles.miniStatValue, { color: '#F59E0B' }]}>{String(stats.pending).padStart(2, '0')}</Text>
             </View>
             <View style={[styles.miniStat, styles.miniStatRight]}>
-              <Text style={styles.miniStatLabel}>ACCEPTED</Text>
-              <Text style={[styles.miniStatValue, { color: COLORS.primary }]}>{String(stats.accepted).padStart(2, '0')}</Text>
+              <Text style={styles.miniStatLabel}>COMPLETED</Text>
+              <Text style={[styles.miniStatValue, { color: COLORS.primary }]}>{String(stats.completedToday).padStart(2, '0')}</Text>
             </View>
           </View>
           <View style={styles.completedCard}>
@@ -240,7 +240,7 @@ const handleDecline = (bookingId: string) => {
 
         {/* Recent Requests */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recent Requests</Text>
+          <Text style={styles.sectionTitle}>New Assigned Bookings (Active Tasks)</Text>
          <TouchableOpacity onPress={() => router.navigate('/(phlebotomist)/bookings')}>
             <Text style={styles.viewAll}>View All</Text>
           </TouchableOpacity>
@@ -311,11 +311,14 @@ const handleDecline = (bookingId: string) => {
           ))
         )}
 
-        {/* Partner Tip */}
+        {/* Phlebotomist Tip */}
         <View style={styles.tipCard}>
-          <MaterialCommunityIcons name="lightbulb-outline" size={18} color="#F59E0B" />
-          <Text style={styles.tipText}>Keep your sample collection kit sanitized before every visit to maintain high hygiene ratings.</Text>
-</View>
+          <MaterialCommunityIcons name="lightbulb-on-outline" size={24} color="#D97706" />
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <Text style={styles.tipTitle}>Quick Tip</Text>
+            <Text style={styles.tipDesc}>Toggle your duty status to Online to start receiving collection requests.</Text>
+          </View>
+        </View>
       </ScreenWrapper>
     </View>
   );
@@ -426,5 +429,7 @@ notifBtn: {
     padding: 14, borderWidth: 1, borderColor: '#FDE68A',
     alignItems: 'flex-start', gap: 10, marginTop: 8,
   },
-  tipText: { fontSize: 13, color: '#92400E', lineHeight: 20, flex: 1 },
+  tipText: { flex: 1, fontSize: 13, color: '#0F172A', lineHeight: 20 },
+  tipTitle: { fontSize: 14, fontWeight: '700', color: '#B45309', marginBottom: 2 },
+  tipDesc: { fontSize: 13, color: '#D97706', lineHeight: 18 },
 });

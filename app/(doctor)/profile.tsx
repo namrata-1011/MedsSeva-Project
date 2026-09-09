@@ -34,7 +34,7 @@ export default function DoctorProfileScreen() {
       console.error('Storage error', e);
     }
     dispatch(logout());
-    router.replace('/(auth)/doctor-login' as any);
+    router.replace('/(auth)/account-type' as any);
   };
 
   const doc = data?.doctor;

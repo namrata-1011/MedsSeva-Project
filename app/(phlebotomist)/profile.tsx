@@ -34,7 +34,7 @@ interface PartnerProfile {
   branchName?: string;
 }
 
-export default function PartnerProfileScreen() {
+export default function PhlebotomistProfileScreen() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((s: RootState) => s.auth.user);
@@ -227,9 +227,9 @@ export default function PartnerProfileScreen() {
             )}
           </TouchableOpacity>
 
-          <Text style={styles.partnerName}>{user?.name || 'Partner'}</Text>
+          <Text style={styles.partnerName}>{user?.name || 'Phlebotomist'}</Text>
           <View style={styles.idStatusRow}>
-            <Text style={styles.partnerId}>ID: {user?.id?.slice(-5) || '00000'}</Text>
+            <Text style={styles.partnerId}>Phlebotomist / Exec ID: {user?.id?.slice(-5) || '00000'}</Text>
             <View style={[
               styles.statusBadge,
               { backgroundColor: profile?.approvalStatus === 'APPROVED' ? '#DCFCE7' : '#FEF9C3' }
@@ -238,7 +238,7 @@ export default function PartnerProfileScreen() {
                 styles.statusBadgeText,
                 { color: profile?.approvalStatus === 'APPROVED' ? '#059669' : '#B45309' }
               ]}>
-                {profile?.approvalStatus === 'APPROVED' ? 'Active Partner' : profile?.approvalStatus}
+                {profile?.approvalStatus === 'APPROVED' ? 'Active Phlebotomist' : profile?.approvalStatus}
               </Text>
             </View>
           </View>
